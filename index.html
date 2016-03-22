@@ -23,11 +23,11 @@
         const DATA = {
           title: 'Scrabble Letters',
           items: [
-            { letter: 'A', score: 1 },
-            { letter: 'B', score: 3 },
-            { letter: 'C', score: 3 },
-            { letter: 'D', score: 2 },
-            { letter: 'E', score: 1 },
+            { letter: 'A', score: 1, count: 9 },
+            { letter: 'B', score: 3, count: 2 },
+            { letter: 'C', score: 3, count: 2 },
+            { letter: 'D', score: 2, count: 4 },
+            { letter: 'E', score: 1, count: 12 },
           ]
         }
 
@@ -48,9 +48,21 @@
                     <div>
                         {
                             this.props.data.map(item =>
-                                <Letter {...item} />
+                                <LetterWrapper {...item} />
                             )
                         }
+                    </div>
+                )
+            }
+        });
+
+        var LetterWrapper = React.createClass({
+            render: function() {
+                return (
+                    <div className="clearfix">
+                        <Letter { ...this.props } />
+                        <p className="btn btn-info pull-left">x { this.props.count }</p>
+                        <br/>
                     </div>
                 )
             }
@@ -59,7 +71,7 @@
         var Letter = React.createClass({
             render: function() {
                 return (
-                    <p className="btn btn-default">{ this.props.letter }<sub>{ this.props.score }</sub></p>
+                    <p className="btn btn-default pull-left">{ this.props.letter }<sub>{ this.props.score }</sub></p>
                 )
             }
         });
