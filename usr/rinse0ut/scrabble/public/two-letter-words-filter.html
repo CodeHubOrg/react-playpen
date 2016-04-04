@@ -25,13 +25,13 @@
                 return (
                     <div>
                         <h1>{ this.props.data.title }</h1>
-                        <Filter data={ this.props.data } />
+                        <FilterCtrl data={ this.props.data } />
                     </div>
                 )
             }
         });
 
-        var Filter = React.createClass({
+        var FilterCtrl = React.createClass({
             getInitialState: function() {
                 return {
                     filter: {
@@ -43,8 +43,6 @@
                 }
             },
             handlePositionFilter: function(event) {
-                // console.log(event.target.value, event.target.key);
-                // console.log('select value: ', this.refs.filter.value);
                 this.setState({
                     filter: {
                         showDefitions: this.state.filter.showDefitions,
@@ -62,6 +60,13 @@
                         letter: event.target.value
                     }
                 });
+                this.render();
+            },
+            handleLetterKeyPress: function(event) {
+                var key = event.charCode;
+                var char = String.fromCharCode(key);
+                console.log('handlePositionKeyPress', event.charCode, char);
+                this.refs.letter.value = char.toUpperCase();
                 this.render();
             },
             handleDefChange: function(event) {
@@ -95,14 +100,16 @@
                 return (
                     <div>
                         <div className="well">
-                            <label id="position">Filter</label>
-                            <select name="filter" ref="filter" onChange={this.handlePositionFilter}>
+
+                            <label id="position">Word</label>
+                            <select name="filter" onChange={ this.handlePositionFilter }>
                                 <option key="start" value="start">Starts with</option>
                                 <option key="contains" value="contains">contains</option>
                                 <option key="end" value="end">Ends with</option>
                             </select>&nbsp;&nbsp;
+
                             <label id="letter">Letter</label>
-                            <select name="letter" onChange={this.handleLetterFilter}>
+                            <select name="letter" ref="letter" onChange={this.handleLetterFilter} onKeyPress={ this.handleLetterKeyPress }>
                                 <option key="">*</option>
                                 {
                                     this.getLetters().map(letter =>
@@ -110,40 +117,52 @@
                                     )}
                                 }
                             </select><br/>
+
                             <label id="showDef">Display Definitions</label>
                             <input type="checkbox" name="showDef" checked={ this.state.filter.showDefitions } onChange={ this.handleDefChange } /><br/>
+
                             <label id="toggleOrder">Toggle Order</label>
                             <input type="checkbox" name="toggleOrder" checked={ this.state.filter.handleOrderChange } onChange={ this.handleOrderChange } /><br/>
                         </div>
-                        <Words data={ this.props.data } filter={ this.state.filter } />
+                        <WordFilter data={ this.props.data } filter={ this.state.filter } />
                     </div>
                 )
             }
         });
 
-        var Words = React.createClass({
+        var WordFilter = React.createClass({
             render: function() {
                 if (this.props.filter.toggleOrder) {
                     this.props.data.reverse();
                 }
-                var self = this;
                 return (
                     <div>
                         {
                             this.props.data.words
-                            .filter(function (item) {
-                                if (self.props.filter.position === 'start') {
-                                    return self.props.filter.letter === null ? true : item.word[0] === self.props.filter.letter;
-                                } else if (self.props.filter.position === 'contains') {
-                                    return self.props.filter.letter === null ? true : item.word.indexOf(self.props.filter.letter) !== -1;
-                                } else if (self.props.filter.position === 'end') {
-                                    return self.props.filter.letter === null ? true : item.word[1] === self.props.filter.letter;
+                            .filter(item => {
+                                if (this.props.filter.letter === null) {
+                                    return true
+                                }
+                                switch (this.props.filter.position) {
+                                    case 'start':
+                                        return item.word[0] === this.props.filter.letter;
+                                        break;
+                                    case 'contains':
+                                        return item.word.indexOf(this.props.filter.letter) !== -1;
+                                        break;
+                                    case 'end':
+                                        return item.word[1] === this.props.filter.letter;
+                                        break;
+                                    default:
+                                        return true
+                                        break;
                                 }
                             })
                             .map(item =>
                                 <div className="clearfix">
                                     <Word word={ item.word } letterPoints={ this.props.data.letterPoints } />
-                                    { this.props.filter.showDefitions ? <Definition def={ item.def } /> : null }
+                                    { this.props.filter.showDefitions ?
+                                        <Definition def={ item.def } /> : null }
                                 </div>
                             )
                         }
