@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Letters</title>
+
+        <!-- le styles -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body class="container">
+        <div id="main"></div>
+    </body>
+
+    <!-- js -->
+    <script src="https://fb.me/react-0.14.7.js"></script>
+    <script src="https://fb.me/react-dom-0.14.7.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        const DATA = {
+          title: 'Scrabble Letter Scores',
+          items: [
+            { letter: 'A', score: 1, count: 9 },
+            { letter: 'B', score: 3, count: 2 },
+            { letter: 'C', score: 3, count: 2 },
+            { letter: 'D', score: 2, count: 4 },
+            { letter: 'E', score: 1, count: 12 },
+          ]
+        }
+
+        var App = React.createClass({
+            render: function() {
+                return (
+                    <div>
+                        <h1>{ this.props.data.title }</h1>
+                        <ScoreCtrl data={ this.props.data.items } maxScore="3" />
+                    </div>
+                )
+            }
+        });
+
+        var ScoreCtrl = React.createClass({
+            render: function() {
+                var rows = [];
+                for (var i = 1; i <= this.props.maxScore; i++) {
+                    rows.push(
+                        <Score score={i} data={this.props.data}/>
+                    );
+                };
+                return (
+                    <div>{rows}</div>
+                )
+            }
+        });
+
+        var Score = React.createClass({
+            render: function() {
+                return (
+                    <div className="clearfix">
+                        <p className="btn btn-info pull-left">{ this.props.score }</p>
+                        {
+                            this.props.data
+                            .filter(item => (item.score === this.props.score))
+                            .map(item =>
+                                <Letter {...item} />
+                            )
+                        }
+                        <br />
+                    </div>
+                )
+            }
+        });
+
+        var Letter = React.createClass({
+            render: function() {
+                return (
+                    <p className="btn btn-default pull-left">
+                        {this.props.letter}
+                        <sub>
+                            {this.props.score}
+                        </sub>
+                    </p>
+                )
+            }
+        });
+
+        ReactDOM.render(
+            <App data={ DATA } />,
+            document.getElementById('main')
+        );
+    </script>
+</html>

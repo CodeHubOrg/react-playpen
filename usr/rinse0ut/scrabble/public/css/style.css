@@ -1,0 +1,22 @@
+.main {
+	margin-top: 50px;
+}
+.form-control {
+	width: 100px;
+}
+.spacer {
+    margin-top: 40px;
+}
+.btn {
+	margin: 5px;
+	padding: 4px 6px;
+}
+sub {
+	margin-left: 4px;
+}
+.def {
+	margin: 12px;
+}
+label {
+	margin-right: 10px;
+}

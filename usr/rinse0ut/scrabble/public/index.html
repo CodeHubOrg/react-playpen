@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Scrabble Index</title>
+
+        <!-- le styles -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body class="container">
+        <div id="main"></div>
+    </body>
+
+    <!-- js -->
+    <script src="https://fb.me/react-0.14.7.js"></script>
+    <script src="https://fb.me/react-dom-0.14.7.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        const DATA = {
+          title: 'Scrabble Letters',
+          items: [
+            { title: 'Letter', page: 'letter.html'},
+            { title: 'Letter Count', page: 'letter-count.html'},
+            { title: 'Letter Score', page: 'letter-score.html'},
+            { title: 'Two Letter Word List', page: 'two-letter-word-list.html'}
+          ]
+        }
+
+        var App = React.createClass({
+            render: function() {
+                return (
+                    <div>
+                        <h1>{ this.props.data.title }</h1>
+                        <Menu data={ this.props.data.items } />
+                    </div>
+                )
+            }
+        });
+
+        var Menu = React.createClass({
+            render: function() {
+                return (
+                    <ul>
+                        {
+                            this.props.data.map(item =>
+                                <li><a href={item.page}>{item.title}</a></li>
+                            )
+                        }
+                        <br />
+                    </ul>
+                )
+            }
+        });
+
+        ReactDOM.render(
+            <App data={ DATA } />,
+            document.getElementById('main')
+        );
+    </script>
+</html>

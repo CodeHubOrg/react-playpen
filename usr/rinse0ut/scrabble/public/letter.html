@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Letters</title>
+
+        <!-- le styles -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body class="container">
+        <div id="main"></div>
+    </body>
+
+    <!-- js -->
+    <script src="https://fb.me/react-0.14.7.js"></script>
+    <script src="https://fb.me/react-dom-0.14.7.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        var Letter = React.createClass({
+            render: function() {
+                return (
+                    <p className="btn btn-default pull-left">{ this.props.letter }<sub>{ this.props.score }</sub></p>
+                )
+            }
+        });
+
+        ReactDOM.render(
+            <Letter letter="A" score="1" />,
+            document.getElementById('main')
+        );
+    </script>
+</html>

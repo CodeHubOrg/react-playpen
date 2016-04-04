@@ -1,0 +1,19 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "Web Scraper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "scraper"
+  ],
+  "author": "dt",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "jsonfile": "^2.2.3",
+    "request": "^2.69.0"
+  }
+}
