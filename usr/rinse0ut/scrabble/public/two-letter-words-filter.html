@@ -24,50 +24,62 @@
             render: function() {
                 return (
                     <div>
-                        <h1>{ this.props.data.title }</h1>
-                        <FilterCtrl data={ this.props.data } />
+                        <h1>{ this.props.data.title}</h1>
+                        <FilterCtrl data={this.props.data} />
                     </div>
                 )
-            }
+           }
         });
 
         var FilterCtrl = React.createClass({
             getInitialState: function() {
                 return {
+                    initialWords: this.props.data.words,
+                    words: this.props.data.words,
                     filter: {
                         showDefitions: true,
                         toggleOrder: false,
                         position: 'start',
                         letter: null,
-                    }
-                }
+                   }
+               }
             },
             handlePositionFilter: function(event) {
+                var position = event.target.value;
+                var letter   = this.state.filter.letter;
                 this.setState({
+                    words: this.filterWords(position, letter),
                     filter: {
                         showDefitions: this.state.filter.showDefitions,
-                        position: event.target.value,
-                        letter: this.state.filter.letter
-                    }
+                        position: position,
+                        letter: letter
+                   }
                 });
-                this.render();
             },
             handleLetterFilter: function(event) {
+                var position = this.state.filter.position;
+                var letter   = event.target.value;
                 this.setState({
+                    words: this.filterWords(position, letter),
                     filter: {
                         showDefitions: this.state.filter.showDefitions,
-                        position: this.state.filter.position,
-                        letter: event.target.value
-                    }
+                        position: position,
+                        letter: letter,
+                   }
                 });
-                this.render();
             },
             handleLetterKeyPress: function(event) {
-                var key = event.charCode;
-                var char = String.fromCharCode(key);
-                console.log('handlePositionKeyPress', event.charCode, char);
-                this.refs.letter.value = char.toUpperCase();
-                this.render();
+                var position = this.state.filter.position;
+                var letter = String.fromCharCode(event.charCode).toUpperCase();
+                this.setState({
+                    words: this.filterWords(position, letter),
+                    filter: {
+                        showDefitions: this.state.filter.showDefitions,
+                        position: position,
+                        letter: letter,
+                   }
+                });
+                this.refs.letter.value = letter;
             },
             handleDefChange: function(event) {
                 this.setState({
@@ -75,19 +87,42 @@
                         showDefitions: !this.state.filter.showDefitions,
                         position: this.state.filter.position,
                         letter: this.state.filter.letter
-                    }
+                   }
                 });
             },
             handleOrderChange: function(event) {
                 this.setState({
+                    words: this.state.words.reverse(),
                     filter: {
                         showDefitions: this.state.filter.showDefitions,
                         position: this.state.filter.position,
                         letter: this.state.filter.letter,
                         toggleOrder: true
-                    }
+                   }
                 });
-                this.render();
+            },
+            filterWords: function(position, letter) {
+                var words = this.state.initialWords
+                    .filter(item => {
+                        if (letter === null) {
+                            return true
+                        }
+                        switch (position) {
+                            case 'start':
+                                return item.word[0] === letter;
+                                break;
+                            case 'contains':
+                                return item.word.indexOf(letter) !== -1;
+                                break;
+                            case 'end':
+                                return item.word[1] === letter;
+                                break;
+                            default:
+                                return true
+                                break;
+                       }
+                });
+                return words;
             },
             getLetters: function() {
                 var letters = [];
@@ -102,14 +137,14 @@
                         <div className="well">
 
                             <label id="position">Word</label>
-                            <select name="filter" onChange={ this.handlePositionFilter }>
+                            <select name="filter" onChange={this.handlePositionFilter}>
                                 <option key="start" value="start">Starts with</option>
                                 <option key="contains" value="contains">contains</option>
                                 <option key="end" value="end">Ends with</option>
                             </select>&nbsp;&nbsp;
 
                             <label id="letter">Letter</label>
-                            <select name="letter" ref="letter" onChange={this.handleLetterFilter} onKeyPress={ this.handleLetterKeyPress }>
+                            <select name="letter" ref="letter" onChange={this.handleLetterFilter} onKeyPress={this.handleLetterKeyPress}>
                                 <option key="">*</option>
                                 {
                                     this.getLetters().map(letter =>
@@ -119,56 +154,34 @@
                             </select><br/>
 
                             <label id="showDef">Display Definitions</label>
-                            <input type="checkbox" name="showDef" checked={ this.state.filter.showDefitions } onChange={ this.handleDefChange } /><br/>
+                            <input type="checkbox" name="showDef" checked={this.state.filter.showDefitions} onChange={this.handleDefChange} /><br/>
 
                             <label id="toggleOrder">Toggle Order</label>
-                            <input type="checkbox" name="toggleOrder" checked={ this.state.filter.handleOrderChange } onChange={ this.handleOrderChange } /><br/>
+                            <input type="checkbox" name="toggleOrder" checked={this.state.filter.handleOrderChange} onChange={this.handleOrderChange} /><br/>
                         </div>
-                        <WordFilter data={ this.props.data } filter={ this.state.filter } />
+                        <Words words={this.state.words} letterPoints={this.props.data.letterPoints} filter={this.state.filter} />
                     </div>
                 )
-            }
-        });
+           }
+       });
 
-        var WordFilter = React.createClass({
+        var Words = React.createClass({
             render: function() {
-                if (this.props.filter.toggleOrder) {
-                    this.props.data.reverse();
-                }
                 return (
                     <div>
                         {
-                            this.props.data.words
-                            .filter(item => {
-                                if (this.props.filter.letter === null) {
-                                    return true
-                                }
-                                switch (this.props.filter.position) {
-                                    case 'start':
-                                        return item.word[0] === this.props.filter.letter;
-                                        break;
-                                    case 'contains':
-                                        return item.word.indexOf(this.props.filter.letter) !== -1;
-                                        break;
-                                    case 'end':
-                                        return item.word[1] === this.props.filter.letter;
-                                        break;
-                                    default:
-                                        return true
-                                        break;
-                                }
-                            })
+                            this.props.words
                             .map(item =>
                                 <div className="clearfix">
-                                    <Word word={ item.word } letterPoints={ this.props.data.letterPoints } />
+                                    <Word word={item.word} letterPoints={this.props.letterPoints} />
                                     { this.props.filter.showDefitions ?
-                                        <Definition def={ item.def } /> : null }
+                                        <Definition def={item.def} /> : null}
                                 </div>
                             )
                         }
                     </div>
                 )
-            }
+           }
         });
 
         var Word = React.createClass({
@@ -177,32 +190,32 @@
                     <div>
                         {
                             this.props.word.split('').map(letter =>
-                                <Letter letter={ letter } score={ this.props.letterPoints[letter] } />
+                                <Letter letter={letter} score={this.props.letterPoints[letter]} />
                             )
                         }
                     </div>
                 )
-            }
+           }
         });
 
         var Definition = React.createClass({
             render: function() {
                 return (
-                    <p className="def"> - { this.props.def }</p>
+                    <p className="def"> - { this.props.def}</p>
                 )
-            }
+           }
         });
 
         var Letter = React.createClass({
             render: function() {
                 return (
-                    <p className="btn btn-default pull-left">{ this.props.letter }<sub>{ this.props.score }</sub></p>
+                    <p className="btn btn-default pull-left">{ this.props.letter}<sub>{ this.props.score}</sub></p>
                 )
             }
         });
 
         ReactDOM.render(
-            <App data={ getData() } />,
+            <App data={getData()} />,
             document.getElementById('main')
         );
 
@@ -613,10 +626,10 @@
                     {
                       "word": "ZA",
                       "def": "slang word for pizza"
-                    }
+                   }
                 ]
-            }
-        }
+           }
+       }
 
     </script>
 </html>
