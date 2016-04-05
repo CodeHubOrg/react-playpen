@@ -1,18 +1,17 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var letterPoints  = require('./storage/letter-points.json');
-var twoLetterWords = require('./storage/two-letter-words.json');
+var letterPoints = require('./storage/letter-points.json');
+var wordsTwoLetter = require('./storage/words-two-letter.json');
+var wordsThreeLetter = require('./storage/words-three-letter.json');
 
 const DATA =  {
-    title: 'Scrabble Two Letter Word Test',
+    title: 'Scrabble Three Letter Word Test',
     letterPoints: letterPoints,
-    words: twoLetterWords
+    words: wordsThreeLetter
 };
 
 var App = React.createClass({
     render: function() {
-        console.log('FOO', letterPoints);
-        console.log('DATA', DATA);
         return (
             <div>
                 <h1>{ this.props.data.title}</h1>
@@ -144,7 +143,7 @@ var TestCtrl = React.createClass({
                         return item.word.indexOf(letter) !== -1;
                         break;
                     case 'end':
-                        return item.word[1] === letter;
+                        return item.word[item.word.length-1] === letter;
                         break;
                     default:
                         return true
@@ -167,7 +166,6 @@ var TestCtrl = React.createClass({
         return map;
     },
     render: function() {
-        console.log('MAP', this.getLetterScoreMap());
         return (
             <div>
                 <div className="well col-md-6">
@@ -193,7 +191,7 @@ var TestCtrl = React.createClass({
                     <input type="checkbox" name="showDef" checked={this.state.filter.showDefitions} onChange={this.handleDefChange} /><br/>
 
                     <label id="guess">Guess</label>
-                    <input type="text" name="guess" ref="guess" maxLength="2" onKeyPress={this.handleGuessKeyPress} />
+                    <input type="text" name="guess" ref="guess" maxLength={this.state.words[0].word.length} onKeyPress={this.handleGuessKeyPress} />
                 </div>
                 <StatsPanel
                     wordCount={this.state.words.length}

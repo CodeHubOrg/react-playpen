@@ -1,9 +1,8 @@
 var request  = require('request');
 var cheerio  = require('cheerio');
 var jsonfile = require('jsonfile');
-var url      = 'http://www.word-buff.com/three-letter-words.html';
+var url      = 'http://www.wineverygame.com/scrabble-word-list-twoletters.php';
 var words    = [];
-var defs     = [];
 
 function scrapeWord(td) {
     var txt  = $(td).text().split(' - ');
@@ -26,19 +25,11 @@ request(url, function(err, res, body) {
 
     $ = cheerio.load(body);
 
-    $('dt').each(function(i, dt) {
-        var word = $(dt);
-        var def  = word.next();
-
-        words.push({
-            "word": word.text(),
-            "def": def.text()
-        });
+    $('td').each(function(i, td) {
+        scrapeWord(td);
     });
 
-    console.log(words);
-
-    jsonfile.writeFile('three-letter-words.json', words, {spaces: 2}, function(err) {
+    jsonfile.writeFile('two-letter-words.json', words, {spaces: 2}, function(err) {
         console.error(err);
     });
 });
