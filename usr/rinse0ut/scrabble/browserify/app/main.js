@@ -63,6 +63,7 @@ var TestCtrl = React.createClass({
             words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
                 position: position,
                 letter: letter
            }
