@@ -6,9 +6,11 @@ var wordsTwoLetter = require('./storage/words-two-letter.json');
 var wordsThreeLetter = require('./storage/words-three-letter.json');
 
 const DATA = {
-    title: 'Scrabble Three Letter Word Test',
+    title: 'Scrabble Word Test',
     letterPoints: letterPoints,
-    words: wordsThreeLetter
+    wordsTwoLetter: wordsTwoLetter,
+    wordsThreeLetter: wordsThreeLetter,
+    words: wordsTwoLetter
 };
 
 var App = React.createClass({
@@ -33,23 +35,41 @@ var TestCtrl = React.createClass({
 
     getInitialState: function () {
         return {
-            initialWords: this.props.data.words,
+            initialWords: this.props.data.wordsTwoLetter,
             words: this.props.data.words,
             correct: [],
             wrong: [],
             filter: {
                 showDefitions: true,
+                showAnswers: false,
                 toggleOrder: false,
                 position: 'start',
                 letter: null
             }
         };
     },
+    handleWordLengthFilter: function (event) {
+        var initialWords = this.props.data[event.target.value];
+        var position = this.state.filter.position;
+        var letter = this.state.filter.letter;
+        this.setState({
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
+            filter: {
+                showDefitions: this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
+                position: position,
+                letter: letter
+            }
+        });
+    },
     handlePositionFilter: function (event) {
+        var initialWords = this.state.initialWords;
         var position = event.target.value;
         var letter = this.state.filter.letter;
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
                 position: position,
@@ -58,22 +78,27 @@ var TestCtrl = React.createClass({
         });
     },
     handleLetterFilter: function (event) {
+        var initialWords = this.state.initialWords;
         var position = this.state.filter.position;
         var letter = event.target.value;
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
                 position: position,
                 letter: letter
             }
         });
     },
     handleLetterKeyPress: function (event) {
+        var initialWords = this.state.initialWords;
         var position = this.state.filter.position;
         var letter = String.fromCharCode(event.charCode).toUpperCase();
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
                 position: position,
@@ -86,6 +111,17 @@ var TestCtrl = React.createClass({
         this.setState({
             filter: {
                 showDefitions: !this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
+                position: this.state.filter.position,
+                letter: this.state.filter.letter
+            }
+        });
+    },
+    handleAnswersChange: function (event) {
+        this.setState({
+            filter: {
+                showDefitions: this.state.filter.showDefitions,
+                showAnswers: !this.state.filter.showAnswers,
                 position: this.state.filter.position,
                 letter: this.state.filter.letter
             }
@@ -107,6 +143,7 @@ var TestCtrl = React.createClass({
             return;
         }
         var guess = this.refs.guess.value.toUpperCase();
+        var initialWords = this.state.initialWords;
         var position = this.state.filter.position;
         var letter = this.state.filter.letter;
 
@@ -125,7 +162,8 @@ var TestCtrl = React.createClass({
         }
 
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             correct: this.state.correct,
             wrong: this.state.wrong,
             filter: {
@@ -138,8 +176,8 @@ var TestCtrl = React.createClass({
         this.refs.guess.value = '';
         this.render();
     },
-    filterWords: function (position, letter) {
-        var words = this.state.initialWords.filter(item => {
+    filterWords: function (initialWords, position, letter) {
+        var words = initialWords.filter(item => {
             if (letter === null) {
                 return true;
             }
@@ -182,8 +220,28 @@ var TestCtrl = React.createClass({
                 { className: 'well col-md-6' },
                 React.createElement(
                     'label',
+                    { id: 'position', className: 'hidden' },
+                    'Word Length'
+                ),
+                React.createElement(
+                    'select',
+                    { name: 'word-length', onChange: this.handleWordLengthFilter },
+                    React.createElement(
+                        'option',
+                        { key: 'wordsTwoLetter', value: 'wordsTwoLetter' },
+                        'Two Letter'
+                    ),
+                    React.createElement(
+                        'option',
+                        { key: 'wordsThreeLetter', value: 'wordsThreeLetter' },
+                        'Three Letter'
+                    )
+                ),
+                '  ',
+                React.createElement(
+                    'label',
                     { id: 'position' },
-                    'Word'
+                    'Words'
                 ),
                 React.createElement(
                     'select',
@@ -191,17 +249,17 @@ var TestCtrl = React.createClass({
                     React.createElement(
                         'option',
                         { key: 'start', value: 'start' },
-                        'Starts with'
+                        'starting with'
                     ),
                     React.createElement(
                         'option',
                         { key: 'contains', value: 'contains' },
-                        'contains'
+                        'containing'
                     ),
                     React.createElement(
                         'option',
                         { key: 'end', value: 'end' },
-                        'Ends with'
+                        'ending with'
                     )
                 ),
                 '  ',
@@ -235,19 +293,27 @@ var TestCtrl = React.createClass({
                 React.createElement('br', null),
                 React.createElement(
                     'label',
+                    { id: 'showAnswers' },
+                    'Show Answers!'
+                ),
+                React.createElement('input', { type: 'checkbox', name: 'showAnswers', checked: this.state.filter.showAnswers, onChange: this.handleAnswersChange }),
+                React.createElement('br', null),
+                React.createElement(
+                    'label',
                     { id: 'guess' },
                     'Guess'
                 ),
                 React.createElement('input', { type: 'text', name: 'guess', ref: 'guess', maxLength: this.state.words[0].word.length, onKeyPress: this.handleGuessKeyPress })
             ),
-            React.createElement(StatsPanel, {
+            !this.state.filter.showAnswers ? React.createElement(StatsPanel, {
                 wordCount: this.state.words.length,
                 correctWordCount: this.state.correct.length,
                 wrongWordCount: this.state.wrong.length
-            }),
+            }) : null,
             React.createElement(
                 'div',
                 null,
+                this.state.filter.showAnswers ? React.createElement(AnswersPanel, { words: this.state.words, letterPoints: this.getLetterScoreMap(), filter: this.state.filter }) : null,
                 this.state.correct.length ? React.createElement(CorrectPanel, { words: this.state.correct, letterPoints: this.getLetterScoreMap(), filter: this.state.filter }) : null,
                 this.state.wrong.length ? React.createElement(WrongPanel, { words: this.state.wrong }) : null
             )
@@ -361,6 +427,35 @@ var WrongPanel = React.createClass({
                         null,
                         word
                     ))
+                )
+            )
+        );
+    }
+});
+
+var AnswersPanel = React.createClass({
+    displayName: 'AnswersPanel',
+
+    render: function () {
+        return React.createElement(
+            'div',
+            { className: 'col-md-6' },
+            React.createElement(
+                'div',
+                { className: 'panel panel-warning' },
+                React.createElement(
+                    'div',
+                    { className: 'panel-heading' },
+                    React.createElement(
+                        'h3',
+                        { className: 'panel-title' },
+                        'Answers'
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'panel-body' },
+                    React.createElement(Words, { words: this.props.words, letterPoints: this.props.letterPoints, filter: this.props.filter })
                 )
             )
         );

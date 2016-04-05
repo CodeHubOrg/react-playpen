@@ -5,9 +5,11 @@ var wordsTwoLetter = require('./storage/words-two-letter.json');
 var wordsThreeLetter = require('./storage/words-three-letter.json');
 
 const DATA =  {
-    title: 'Scrabble Three Letter Word Test',
+    title: 'Scrabble Word Test',
     letterPoints: letterPoints,
-    words: wordsThreeLetter
+    wordsTwoLetter: wordsTwoLetter,
+    wordsThreeLetter: wordsThreeLetter,
+    words: wordsTwoLetter
 };
 
 var App = React.createClass({
@@ -24,23 +26,41 @@ var App = React.createClass({
 var TestCtrl = React.createClass({
     getInitialState: function() {
         return {
-            initialWords: this.props.data.words,
+            initialWords: this.props.data.wordsTwoLetter,
             words: this.props.data.words,
             correct: [],
             wrong: [],
             filter: {
                 showDefitions: true,
+                showAnswers: false,
                 toggleOrder: false,
                 position: 'start',
                 letter: null,
            }
        }
     },
-    handlePositionFilter: function(event) {
-        var position = event.target.value;
-        var letter   = this.state.filter.letter;
+    handleWordLengthFilter: function(event) {
+        var initialWords = this.props.data[event.target.value];
+        var position     = this.state.filter.position;
+        var letter       = this.state.filter.letter;
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
+            filter: {
+                showDefitions: this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
+                position: position,
+                letter: letter
+           }
+        });
+    },
+    handlePositionFilter: function(event) {
+        var initialWords = this.state.initialWords;
+        var position     = event.target.value;
+        var letter       = this.state.filter.letter;
+        this.setState({
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
                 position: position,
@@ -49,22 +69,27 @@ var TestCtrl = React.createClass({
         });
     },
     handleLetterFilter: function(event) {
-        var position = this.state.filter.position;
-        var letter   = event.target.value;
+        var initialWords = this.state.initialWords;
+        var position     = this.state.filter.position;
+        var letter       = event.target.value;
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
                 position: position,
                 letter: letter,
            }
         });
     },
     handleLetterKeyPress: function(event) {
-        var position = this.state.filter.position;
-        var letter = String.fromCharCode(event.charCode).toUpperCase();
+        var initialWords = this.state.initialWords;
+        var position    = this.state.filter.position;
+        var letter      = String.fromCharCode(event.charCode).toUpperCase();
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             filter: {
                 showDefitions: this.state.filter.showDefitions,
                 position: position,
@@ -77,6 +102,17 @@ var TestCtrl = React.createClass({
         this.setState({
             filter: {
                 showDefitions: !this.state.filter.showDefitions,
+                showAnswers: this.state.filter.showAnswers,
+                position: this.state.filter.position,
+                letter: this.state.filter.letter
+           }
+        });
+    },
+    handleAnswersChange: function(event) {
+        this.setState({
+            filter: {
+                showDefitions: this.state.filter.showDefitions,
+                showAnswers: !this.state.filter.showAnswers,
                 position: this.state.filter.position,
                 letter: this.state.filter.letter
            }
@@ -97,9 +133,10 @@ var TestCtrl = React.createClass({
         if (event.charCode !== 13) {
             return;
         }
-        var guess    = this.refs.guess.value.toUpperCase();
-        var position = this.state.filter.position;
-        var letter   = this.state.filter.letter;
+        var guess        = this.refs.guess.value.toUpperCase();
+        var initialWords = this.state.initialWords;
+        var position     = this.state.filter.position;
+        var letter       = this.state.filter.letter;
 
         var correct = this.state.words.filter(item => {
             return guess === item.word;
@@ -116,7 +153,8 @@ var TestCtrl = React.createClass({
         }
 
         this.setState({
-            words: this.filterWords(position, letter),
+            initialWords: initialWords,
+            words: this.filterWords(initialWords, position, letter),
             correct: this.state.correct,
             wrong: this.state.wrong,
             filter: {
@@ -129,8 +167,8 @@ var TestCtrl = React.createClass({
         this.refs.guess.value = '';
         this.render();
     },
-    filterWords: function(position, letter) {
-        var words = this.state.initialWords
+    filterWords: function(initialWords, position, letter) {
+        var words = initialWords
             .filter(item => {
                 if (letter === null) {
                     return true
@@ -170,11 +208,17 @@ var TestCtrl = React.createClass({
             <div>
                 <div className="well col-md-6">
 
-                    <label id="position">Word</label>
+                    <label id="position" className="hidden">Word Length</label>
+                    <select name="word-length" onChange={this.handleWordLengthFilter}>
+                        <option key="wordsTwoLetter" value="wordsTwoLetter">Two Letter</option>
+                        <option key="wordsThreeLetter" value="wordsThreeLetter">Three Letter</option>
+                    </select>&nbsp;&nbsp;
+
+                    <label id="position">Words</label>
                     <select name="filter" onChange={this.handlePositionFilter}>
-                        <option key="start" value="start">Starts with</option>
-                        <option key="contains" value="contains">contains</option>
-                        <option key="end" value="end">Ends with</option>
+                        <option key="start" value="start">starting with</option>
+                        <option key="contains" value="contains">containing</option>
+                        <option key="end" value="end">ending with</option>
                     </select>&nbsp;&nbsp;
 
                     <label id="letter">Letter</label>
@@ -190,15 +234,27 @@ var TestCtrl = React.createClass({
                     <label id="showDef">Display Definitions</label>
                     <input type="checkbox" name="showDef" checked={this.state.filter.showDefitions} onChange={this.handleDefChange} /><br/>
 
+                    <label id="showAnswers">Show Answers!</label>
+                    <input type="checkbox" name="showAnswers" checked={this.state.filter.showAnswers} onChange={this.handleAnswersChange} /><br/>
+
                     <label id="guess">Guess</label>
                     <input type="text" name="guess" ref="guess" maxLength={this.state.words[0].word.length} onKeyPress={this.handleGuessKeyPress} />
                 </div>
-                <StatsPanel
-                    wordCount={this.state.words.length}
-                    correctWordCount={this.state.correct.length}
-                    wrongWordCount={this.state.wrong.length}
-                />
+                {
+                    !this.state.filter.showAnswers ?
+                        <StatsPanel
+                            wordCount={this.state.words.length}
+                            correctWordCount={this.state.correct.length}
+                            wrongWordCount={this.state.wrong.length}
+                        /> :
+                        null
+                }
                 <div>
+                    {
+                        this.state.filter.showAnswers ?
+                            <AnswersPanel words={this.state.words} letterPoints={this.getLetterScoreMap()} filter={this.state.filter} /> :
+                            null
+                    }
                     {
                         this.state.correct.length ?
                             <CorrectPanel words={this.state.correct} letterPoints={this.getLetterScoreMap()} filter={this.state.filter} /> :
@@ -274,6 +330,23 @@ var WrongPanel = React.createClass({
                                 <p>{word}</p>
                             )
                         }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+var AnswersPanel = React.createClass({
+    render: function() {
+        return (
+            <div className="col-md-6">
+                <div className="panel panel-warning">
+                    <div className="panel-heading">
+                        <h3 className="panel-title">Answers</h3>
+                    </div>
+                    <div className="panel-body">
+                        <Words words={this.props.words} letterPoints={this.props.letterPoints} filter={this.props.filter} />
                     </div>
                 </div>
             </div>
