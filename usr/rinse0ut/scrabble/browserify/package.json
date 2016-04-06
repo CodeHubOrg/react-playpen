@@ -9,10 +9,17 @@
     "react": "^0.14.8",
     "react-dom": "^0.14.8"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-watch": "^4.3.5",
+    "gulp-webserver": "^0.9.1"
+  },
   "scripts": {
-    "build": "browserify -t [ babelify --presets [ react ] ] app/main.js -o public/js/bundle.js"
+    "build": "browserify -t [ babelify --presets [ react ] ] app/main.js -o public/js/bundle.js",
+    "start": "gulp webserver",
+    "dev": "gulp watch"
   },
   "author": "",
   "license": "ISC"
 }
+
