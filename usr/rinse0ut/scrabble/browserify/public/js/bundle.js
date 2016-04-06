@@ -7,6 +7,10 @@ var letterPoints = require('./storage/letter-points.json');
 var wordsTwoLetter = require('./storage/words-two-letter.json');
 var wordsThreeLetter = require('./storage/words-three-letter.json');
 
+if (typeof window !== 'undefined') {
+    window.React = React;
+}
+
 const DATA = {
     title: 'Scrabble Word Test',
     letterPoints: letterPoints,
@@ -18,11 +22,6 @@ var App = React.createClass({
     displayName: 'App',
 
     render: function () {
-        let obj = {
-            something: 'some value'
-        };
-        obj = _extends({}, obj, { something: 'orly' });
-        console.log(obj);
         return React.createElement(
             'div',
             null,
@@ -54,98 +53,47 @@ var TestCtrl = React.createClass({
             }
         };
     },
-    handleWordLengthFilter: function (event) {
-        var initialWords = this.props.data[event.target.value];
+    handleFilter: function (key, value, callback) {
+        var filter = this.state.filter;
+        filter[key] = value;
         this.setState(_extends({}, this.state, {
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter)
-        }));
+            filter: filter
+        }), () => {
+            callback();
+            console.log('handleFilter', key, value);
+        });
+    },
+    handleWordLengthFilter: function (event) {
+        this.setState(_extends({}, this.state, {
+            initialWords: this.props.data[event.target.value]
+        }), () => {
+            this.filterWords();
+            console.log('handleWordLengthFilter', this.state);
+        });
     },
     handlePositionFilter: function (event) {
-        var initialWords = this.state.initialWords;
-        var position = event.target.value;
-        var letter = this.state.filter.letter;
-
-        this.setState({
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                showAnswers: this.state.filter.showAnswers,
-                position: position,
-                letter: letter
-            }
-        });
+        this.handleFilter('position', event.target.value, () => this.filterWords());
     },
     handleLetterFilter: function (event) {
-        var initialWords = this.state.initialWords;
-        var position = this.state.filter.position;
-        var letter = event.target.value;
-        this.setState({
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                showAnswers: this.state.filter.showAnswers,
-                position: position,
-                letter: letter
-            }
-        });
+        this.handleFilter('letter', event.target.value, () => this.filterWords());
     },
     handleLetterKeyPress: function (event) {
-        var initialWords = this.state.initialWords;
-        var position = this.state.filter.position;
-        var letter = String.fromCharCode(event.charCode).toUpperCase();
-        this.setState({
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                position: position,
-                letter: letter
-            }
+        this.handleFilter('letter', String.fromCharCode(event.charCode).toUpperCase(), () => {
+            this.filterWords();
+            this.refs.letter.value = this.stateletter;
         });
-        this.refs.letter.value = letter;
     },
     handleDefChange: function (event) {
-        this.setState({
-            filter: {
-                showDefitions: !this.state.filter.showDefitions,
-                showAnswers: this.state.filter.showAnswers,
-                position: this.state.filter.position,
-                letter: this.state.filter.letter
-            }
-        });
+        this.handleFilter('showDefitions', !this.state.showDefitions);
     },
     handleAnswersChange: function (event) {
-        this.setState({
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                showAnswers: !this.state.filter.showAnswers,
-                position: this.state.filter.position,
-                letter: this.state.filter.letter
-            }
-        });
-    },
-    handleOrderChange: function (event) {
-        this.setState({
-            words: this.state.words.reverse(),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                position: this.state.filter.position,
-                letter: this.state.filter.letter,
-                toggleOrder: true
-            }
-        });
+        this.handleFilter('showAnswers', !this.state.showAnswers);
     },
     handleGuessKeyPress: function (event) {
         if (event.charCode !== 13) {
             return;
         }
         var guess = this.refs.guess.value.toUpperCase();
-        var initialWords = this.state.initialWords;
-        var position = this.state.filter.position;
-        var letter = this.state.filter.letter;
 
         var correct = this.state.words.filter(item => {
             return guess === item.word;
@@ -161,23 +109,19 @@ var TestCtrl = React.createClass({
             this.state.wrong.push(guess);
         }
 
-        this.setState({
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
+        this.setState(_extends({}, this.state, {
             correct: this.state.correct,
-            wrong: this.state.wrong,
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                position: position,
-                letter: letter
-            }
+            wrong: this.state.wrong
+        }), () => {
+            this.filterWords();
+            this.refs.guess.value = '';
+            this.render();
         });
-
-        this.refs.guess.value = '';
-        this.render();
     },
-    filterWords: function (initialWords, position, letter) {
-        var words = initialWords.filter(item => {
+    filterWords: function () {
+        let letter = this.state.filter.letter;
+        let position = this.state.filter.position;
+        let words = this.state.initialWords.filter(item => {
             if (letter === null) {
                 return true;
             }
@@ -196,7 +140,10 @@ var TestCtrl = React.createClass({
                     break;
             }
         });
-        return words;
+        console.log('filterWords', position, letter, words);
+        this.setState(_extends({}, this.state, {
+            words: words
+        }));
     },
     getLetters: function () {
         var letters = this.props.data.letterPoints.map(item => {
