@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var letterPoints = require('./storage/letter-points.json');
@@ -9,14 +11,18 @@ const DATA = {
     title: 'Scrabble Word Test',
     letterPoints: letterPoints,
     wordsTwoLetter: wordsTwoLetter,
-    wordsThreeLetter: wordsThreeLetter,
-    words: wordsTwoLetter
+    wordsThreeLetter: wordsThreeLetter
 };
 
 var App = React.createClass({
     displayName: 'App',
 
     render: function () {
+        let obj = {
+            something: 'some value'
+        };
+        obj = _extends({}, obj, { something: 'orly' });
+        console.log(obj);
         return React.createElement(
             'div',
             null,
@@ -36,7 +42,7 @@ var TestCtrl = React.createClass({
     getInitialState: function () {
         return {
             initialWords: this.props.data.wordsTwoLetter,
-            words: this.props.data.words,
+            words: this.props.data.wordsTwoLetter,
             correct: [],
             wrong: [],
             filter: {
@@ -50,23 +56,16 @@ var TestCtrl = React.createClass({
     },
     handleWordLengthFilter: function (event) {
         var initialWords = this.props.data[event.target.value];
-        var position = this.state.filter.position;
-        var letter = this.state.filter.letter;
-        this.setState({
+        this.setState(_extends({}, this.state, {
             initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                showAnswers: this.state.filter.showAnswers,
-                position: position,
-                letter: letter
-            }
-        });
+            words: this.filterWords(initialWords, position, letter)
+        }));
     },
     handlePositionFilter: function (event) {
         var initialWords = this.state.initialWords;
         var position = event.target.value;
         var letter = this.state.filter.letter;
+
         this.setState({
             initialWords: initialWords,
             words: this.filterWords(initialWords, position, letter),
@@ -226,7 +225,7 @@ var TestCtrl = React.createClass({
                 ),
                 React.createElement(
                     'select',
-                    { name: 'word-length', onChange: this.handleWordLengthFilter },
+                    { name: 'word-length', className: 'form-control', onChange: this.handleWordLengthFilter },
                     React.createElement(
                         'option',
                         { key: 'wordsTwoLetter', value: 'wordsTwoLetter' },
@@ -246,7 +245,7 @@ var TestCtrl = React.createClass({
                 ),
                 React.createElement(
                     'select',
-                    { name: 'filter', onChange: this.handlePositionFilter },
+                    { name: 'filter', className: 'form-control', onChange: this.handlePositionFilter },
                     React.createElement(
                         'option',
                         { key: 'start', value: 'start' },
@@ -271,7 +270,7 @@ var TestCtrl = React.createClass({
                 ),
                 React.createElement(
                     'select',
-                    { name: 'letter', ref: 'letter', onChange: this.handleLetterFilter, onKeyPress: this.handleLetterKeyPress },
+                    { name: 'letter', className: 'form-control', ref: 'letter', onChange: this.handleLetterFilter, onKeyPress: this.handleLetterKeyPress },
                     React.createElement(
                         'option',
                         { key: '' },
@@ -304,7 +303,7 @@ var TestCtrl = React.createClass({
                     { id: 'guess' },
                     'Guess'
                 ),
-                React.createElement('input', { type: 'text', name: 'guess', ref: 'guess', maxLength: this.state.words[0].word.length, onKeyPress: this.handleGuessKeyPress })
+                React.createElement('input', { type: 'text', name: 'guess', ref: 'guess', className: 'form-control', maxLength: this.state.words[0].word.length, onKeyPress: this.handleGuessKeyPress })
             ),
             !this.state.filter.showAnswers ? React.createElement(StatsPanel, {
                 wordCount: this.state.words.length,

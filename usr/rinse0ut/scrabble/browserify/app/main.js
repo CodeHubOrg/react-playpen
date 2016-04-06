@@ -8,12 +8,16 @@ const DATA =  {
     title: 'Scrabble Word Test',
     letterPoints: letterPoints,
     wordsTwoLetter: wordsTwoLetter,
-    wordsThreeLetter: wordsThreeLetter,
-    words: wordsTwoLetter
+    wordsThreeLetter: wordsThreeLetter
 };
 
 var App = React.createClass({
     render: function() {
+        let obj = {
+          something: 'some value'
+        };
+        obj = {...obj, something: 'orly'};
+        console.log(obj);
         return (
             <div>
                 <h1>{ this.props.data.title}</h1>
@@ -27,7 +31,7 @@ var TestCtrl = React.createClass({
     getInitialState: function() {
         return {
             initialWords: this.props.data.wordsTwoLetter,
-            words: this.props.data.words,
+            words: this.props.data.wordsTwoLetter,
             correct: [],
             wrong: [],
             filter: {
@@ -40,24 +44,18 @@ var TestCtrl = React.createClass({
        }
     },
     handleWordLengthFilter: function(event) {
-        var initialWords = this.props.data[event.target.value];
-        var position     = this.state.filter.position;
-        var letter       = this.state.filter.letter;
-        this.setState({
-            initialWords: initialWords,
-            words: this.filterWords(initialWords, position, letter),
-            filter: {
-                showDefitions: this.state.filter.showDefitions,
-                showAnswers: this.state.filter.showAnswers,
-                position: position,
-                letter: letter
-           }
-        });
+      var initialWords = this.props.data[event.target.value];
+      this.setState({
+          ...this.state,
+          initialWords: initialWords,
+          words: this.filterWords(initialWords, position, letter)
+      });
     },
     handlePositionFilter: function(event) {
         var initialWords = this.state.initialWords;
         var position     = event.target.value;
         var letter       = this.state.filter.letter;
+
         this.setState({
             initialWords: initialWords,
             words: this.filterWords(initialWords, position, letter),
@@ -210,20 +208,20 @@ var TestCtrl = React.createClass({
                 <div className="well col-md-6">
 
                     <label id="position" className="hidden">Word Length</label>
-                    <select name="word-length" onChange={this.handleWordLengthFilter}>
+                    <select name="word-length" className="form-control" onChange={this.handleWordLengthFilter}>
                         <option key="wordsTwoLetter" value="wordsTwoLetter">Two Letter</option>
                         <option key="wordsThreeLetter" value="wordsThreeLetter">Three Letter</option>
                     </select>&nbsp;&nbsp;
 
                     <label id="position">Words</label>
-                    <select name="filter" onChange={this.handlePositionFilter}>
+                    <select name="filter" className="form-control" onChange={this.handlePositionFilter}>
                         <option key="start" value="start">starting with</option>
                         <option key="contains" value="contains">containing</option>
                         <option key="end" value="end">ending with</option>
                     </select>&nbsp;&nbsp;
 
                     <label id="letter">Letter</label>
-                    <select name="letter" ref="letter" onChange={this.handleLetterFilter} onKeyPress={this.handleLetterKeyPress}>
+                    <select name="letter" className="form-control" ref="letter" onChange={this.handleLetterFilter} onKeyPress={this.handleLetterKeyPress}>
                         <option key="">*</option>
                         {
                             this.getLetters().map(letter =>
@@ -239,7 +237,7 @@ var TestCtrl = React.createClass({
                     <input type="checkbox" name="showAnswers" checked={this.state.filter.showAnswers} onChange={this.handleAnswersChange} /><br/>
 
                     <label id="guess">Guess</label>
-                    <input type="text" name="guess" ref="guess" maxLength={this.state.words[0].word.length} onKeyPress={this.handleGuessKeyPress} />
+                    <input type="text" name="guess" ref="guess" className="form-control" maxLength={this.state.words[0].word.length} onKeyPress={this.handleGuessKeyPress} />
                 </div>
                 {
                     !this.state.filter.showAnswers ?

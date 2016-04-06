@@ -3,6 +3,9 @@
 }
 .form-control {
 	width: 100px;
+	display: inline;
+	padding: 0;
+	height: 26px;
 }
 .spacer {
     margin-top: 40px;
@@ -10,13 +13,19 @@
 .btn {
 	margin: 5px;
 	padding: 4px 6px;
+	font-weight: bold;
 }
 sub {
 	margin-left: 4px;
+	font-size: 9px;
 }
 .def {
 	margin: 12px;
 }
 label {
 	margin-right: 10px;
+}
+hr {
+	margin: 0 0 5px;
+	border-top: 1px solid #e3e3e3;
 }

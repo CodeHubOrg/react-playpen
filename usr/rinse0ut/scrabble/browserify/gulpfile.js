@@ -15,6 +15,7 @@ gulp.task('webserver', function() {
 
 gulp.task('watch', function() {
     gulp.watch('app/*.js', ['build']);
+    gulp.watch('public/*.css', ['build']);
 });
 
 gulp.task('build', function(cb) {
