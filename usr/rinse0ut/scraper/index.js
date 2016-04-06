@@ -28,7 +28,7 @@ request(url, function(err, res, body) {
 
     $('dt').each(function(i, dt) {
         var word = $(dt);
-        var def  = word.next();
+        var def  = word.next('dd');
 
         words.push({
             "word": word.text(),
@@ -38,7 +38,7 @@ request(url, function(err, res, body) {
 
     console.log(words);
 
-    jsonfile.writeFile('three-letter-words.json', words, {spaces: 2}, function(err) {
-        console.error(err);
-    });
+    // jsonfile.writeFile('three-letter-words.json', words, {spaces: 2}, function(err) {
+    //     console.error(err);
+    // });
 });
