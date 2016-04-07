@@ -40,28 +40,20 @@ var TestCtrl = React.createClass({
 
     getInitialState: function () {
         return {
-            initialWords: this.props.data.wordsTwoLetter,
-            words: this.props.data.wordsTwoLetter,
+            initialWords: this.props.data.wordsThreeLetter,
+            words: this.props.data.wordsThreeLetter,
             correct: [],
             wrong: [],
+            helpList: [],
+            helperLetter: 'A',
             filter: {
                 showDefitions: true,
                 showAnswers: false,
-                toggleOrder: false,
+                helper: false,
                 position: 'start',
-                letter: null
+                letter: 'A'
             }
         };
-    },
-    handleFilter: function (key, value, callback) {
-        var filter = this.state.filter;
-        filter[key] = value;
-        this.setState(_extends({}, this.state, {
-            filter: filter
-        }), () => {
-            callback();
-            console.log('handleFilter', key, value);
-        });
     },
     handleWordLengthFilter: function (event) {
         this.setState(_extends({}, this.state, {
@@ -84,10 +76,25 @@ var TestCtrl = React.createClass({
         });
     },
     handleDefChange: function (event) {
-        this.handleFilter('showDefitions', !this.state.showDefitions);
+        this.handleFilter('showDefitions', !this.state.filter.showDefitions);
+    },
+    handleHelperChange: function (event) {
+        this.handleFilter('helper', !this.state.filter.helper, this.handleHelper());
+    },
+    handleHelper: function (event) {
+        var firstLetter = this.state.filter.letter;
+        var secondLetter = this.state.helperLetter;
+        var helpList = this.state.initialWords.filter(item => item.word[0] === firstLetter && item.word[1] === secondLetter);
+
+        this.setState(_extends({}, this.state, {
+            helpList: helpList
+        }), () => {
+            this.refs.guess.value = firstLetter + secondLetter;
+        });
+        console.log('GUESS', guess, helpList);
     },
     handleAnswersChange: function (event) {
-        this.handleFilter('showAnswers', !this.state.showAnswers);
+        this.handleFilter('showAnswers', !this.state.filter.showAnswers);
     },
     handleGuessKeyPress: function (event) {
         if (event.charCode !== 13) {
@@ -114,8 +121,19 @@ var TestCtrl = React.createClass({
             wrong: this.state.wrong
         }), () => {
             this.filterWords();
-            this.refs.guess.value = '';
+            this.state.filter.helper ? this.handleHelper() : this.refs.guess.value = null;
             this.render();
+        });
+    },
+    handleFilter: function (key, value, callback) {
+        var callback = callback || function () {};
+        var filter = this.state.filter;
+        filter[key] = value;
+        this.setState(_extends({}, this.state, {
+            filter: filter
+        }), () => {
+            callback();
+            console.log('handleFilter', key, value);
         });
     },
     filterWords: function () {
@@ -140,7 +158,7 @@ var TestCtrl = React.createClass({
                     break;
             }
         });
-        console.log('filterWords', position, letter, words);
+        console.log('filterWords', position, letter, words, this.state);
         this.setState(_extends({}, this.state, {
             words: words
         }));
@@ -237,6 +255,13 @@ var TestCtrl = React.createClass({
                     'Display Definitions'
                 ),
                 React.createElement('input', { type: 'checkbox', name: 'showDef', checked: this.state.filter.showDefitions, onChange: this.handleDefChange }),
+                React.createElement('br', null),
+                React.createElement(
+                    'label',
+                    { id: 'Helper' },
+                    'Helper'
+                ),
+                React.createElement('input', { type: 'checkbox', name: 'showAnswers', checked: this.state.filter.helper, onChange: this.handleHelperChange }),
                 React.createElement('br', null),
                 React.createElement(
                     'label',

@@ -1,21 +1,23 @@
 #Rinse0ut
 
-##Scrabble Html Prototype
+##Scrabble Vanilla Prototype
 
 A component step by step example of building the scrabble app prototype.
 
 Run in your browser:
 http://localhost/js101/react-playpen/usr/rinse0ut/scrabble/html/public/   
 
-##Scrabble Browserify App
+##Scrabble Browserify Prototype
 
-A scrabble app for showing / testing two and three letter words using browserify.
+A scrabble app for showing / testing two and three letter words using Browserify.
 
-Run in your browser
-http://localhost/js101/react-playpen/usr/rinse0ut/scrabble/browserify/public/
+##Scrabble Reflux App
 
-Make your own changes and run the build:   
-npm run build
+A scrabble app for showing / testing two and three letter words using Refux.
+
+##Word Scrapper
+
+A node js script that scrapes two/three  letter scrabble words and writes them to a json file.
 
 ##2 Letter Word Scrapper
 

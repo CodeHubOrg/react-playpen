@@ -10,8 +10,8 @@ npm install -g browserify gulp
 
 ##Run
 To create a local webserver and open the project in your browser run:   
-npm start
+npm run start
 
 ##Development
 To automatically reload and build the project on file changes run:   
-npm dev
+npm run dev
