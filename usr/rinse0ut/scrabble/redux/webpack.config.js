@@ -16,6 +16,9 @@ module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
+//   resolve:
+// modulesDirectories: ['src', 'src/js', 'web_modules', 'bower_components', 'node_modules']
+
   module: {
     loaders: [
       {
@@ -30,7 +33,11 @@ module.exports = {
         loaders: [ 'babel' ],
         exclude: /node_modules/,
         include: __dirname
-      }
+     },
+     { test: /\.json$/, loader: 'json' },
     ]
-  }
+  },
+    node: {
+      fs: "empty"
+    }
 }

@@ -21,7 +21,7 @@ class Letter extends Component {
 
 Letter.propTypes = {
   letter: PropTypes.string.isRequired,
-  score: PropTypes.string.isRequired
+  score: PropTypes.number.isRequired
 }
 
 export default Letter
