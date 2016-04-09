@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-const Select = ({ onChange, options, text }) => (
+const Select = ({ onChange, value, options, text }) => (
     <div>
         <label id={text}>
             {text}
@@ -8,14 +8,14 @@ const Select = ({ onChange, options, text }) => (
         <select
             name="letter"
             className="form-control"
+            value={value}
             onChange={onChange}
         >
-            <option key="" value="">*</option>
-            {
-                options.map(value =>
-                    <option key={value} value={value}>{value}</option>
-                )}
-            }
+        {
+            options.map(value =>
+                <option key={value} value={value}>{value}</option>
+            )}
+        }
         </select>
     </div>
 )

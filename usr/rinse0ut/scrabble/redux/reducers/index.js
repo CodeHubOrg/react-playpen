@@ -3,25 +3,32 @@ import twoLetterWords from '../stores/words-two-letter.json';
 import threeLetterWords from '../stores/words-three-letter.json';
 
 const initialState = {
-    words: [],
-    letterIndex: 0,
+    words: threeLetterWords,
+    firstLetterFilter: ' ',
     show: false
 }
+
+const initalWords = twoLetterWords;
 
 export default function letterApp(state = initialState, action) {
   switch (action.type) {
     case 'FILTER_WORD':
         return Object.assign({}, state, {
-            words: threeLetterWords.filter(item => item.word[0] === action.letter)
+            words: initalWords.filter(item => item.word[0] === action.letter),
+            firstLetterFilter: action.letter
         })
-    case 'INCREMENT':
-        let letterIndex = (state.letterIndex >= letters.length-1) ? 0 : letterIndex+1;
-        // return Object.assign({}, state, {
-        //   letterIndex: letterIndex
-        // })
-    case 'TOGGLE_SHOW':
+    case 'INCREMENT_LETTER_FILTER':
+        const letterIndex       = letters.findIndex(item => item.letter === state.firstLetterFilter)
+        const nextLetterIndex   = (letterIndex >= letters.length - 1) ? 0 : letterIndex + 1;
+        const firstLetterFilter = letters[nextLetterIndex].letter;
+
         return Object.assign({}, state, {
-          show: !state.show
+            words: initalWords.filter(item => item.word[0] === firstLetterFilter),
+            firstLetterFilter: firstLetterFilter
+        })
+    case 'TOGGLE_INCREMENT_LETTER_FILTER':
+        return Object.assign({}, state, {
+            show: !state.show
         })
     default:
       return state

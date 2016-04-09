@@ -4,6 +4,7 @@ var webpack = require('webpack')
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
   entry: [
+    'babel-polyfill',
     'webpack-hot-middleware/client',
     './index'
   ],
@@ -16,9 +17,6 @@ module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
-//   resolve:
-// modulesDirectories: ['src', 'src/js', 'web_modules', 'bower_components', 'node_modules']
-
   module: {
     loaders: [
       {
@@ -36,8 +34,5 @@ module.exports = {
      },
      { test: /\.json$/, loader: 'json' },
     ]
-  },
-    node: {
-      fs: "empty"
-    }
+  }
 }
