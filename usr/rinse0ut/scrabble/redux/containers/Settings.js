@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Checkbox from '../components/Checkbox'
+import { toggleIncrementLetterFilter } from '../actions'
 
 export default class Settings extends Component {
   render() {
@@ -8,7 +9,7 @@ export default class Settings extends Component {
         <div className="well col-md-3 gutter-left">
             <h2>Settings</h2>
             <Checkbox
-                onChange={() => store.dispatch({ type: 'TOGGLE_INCREMENT_LETTER_FILTER' })}
+                onChange={() => store.dispatch(toggleIncrementLetterFilter())}
                 checked={show}
                 text="Letter Incrementor"
             />

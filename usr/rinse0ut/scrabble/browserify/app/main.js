@@ -29,8 +29,8 @@ var App = React.createClass({
 var TestCtrl = React.createClass({
     getInitialState: function() {
         return {
-            initialWords: this.props.data.wordsThreeLetter,
-            words: this.props.data.wordsThreeLetter,
+            initialWords: this.props.data.wordsTwoLetter,
+            words: this.props.data.wordsTwoLetter,
             correct: [],
             wrong: [],
             helpList: [],

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Select from '../components/Select'
 import Letter from '../components/Letter'
+import { filterWord, incrementLetterFilter } from '../actions'
 
 export default class Filter extends Component {
   render() {
@@ -14,10 +15,10 @@ export default class Filter extends Component {
                     <Letter
                       letter={firstLetterFilter}
                       score="*"
-                      onIncrement={() => store.dispatch({ type: 'INCREMENT_LETTER_FILTER' })}
+                      onIncrement={() => store.dispatch(incrementLetterFilter())}
                     /> :
                     <Select
-                        onChange={(e) => store.dispatch({ type: 'FILTER_WORD', letter: e.target.value })}
+                        onChange={(e) => store.dispatch(filterWord(e.target.value))}
                         value={firstLetterFilter}
                         options={letters.map(item => item.letter)}
                         text="First Letter"
