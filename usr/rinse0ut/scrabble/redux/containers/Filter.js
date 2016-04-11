@@ -1,28 +1,18 @@
 import React, { Component } from 'react'
-import Select from '../components/Select'
-import Letter from '../components/Letter'
-import { filterWord, incrementLetterFilter } from '../actions'
+import FilterLetter from './FilterLetter'
 
 export default class Filter extends Component {
   render() {
-    const { store, letters } = this.props
-    const { show, firstLetterFilter, words } = store.getState()
     return (
         <div className="well col-md-3">
             <h2>Filter</h2>
             {
-                show ?
-                    <Letter
-                      letter={firstLetterFilter}
-                      score="*"
-                      onIncrement={() => store.dispatch(incrementLetterFilter())}
-                    /> :
-                    <Select
-                        onChange={(e) => store.dispatch(filterWord(e.target.value))}
-                        value={firstLetterFilter}
-                        options={letters.map(item => item.letter)}
-                        text="First Letter"
-                    />
+                <div>
+                    <FilterLetter position={0} text="First Letter" {...this.props} />
+                    <FilterLetter position={1} text="Second Letter" {...this.props} />
+                    <FilterLetter position={2} text="Third Letter" {...this.props} />
+                    <FilterLetter position={null} text="Contains" {...this.props} />
+                </div>
             }
         </div>
     )

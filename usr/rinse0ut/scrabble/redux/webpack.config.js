@@ -19,20 +19,22 @@ module.exports = {
   ],
   module: {
     loaders: [
-      {
-        // Test expects a RegExp! Note the slashes!
-        test: /\.css$/,
-        loaders: ['style', 'css'],
-        // Include accepts either a path or an array of paths.
-        include: path.join(__dirname, 'css')
-      },
-      {
-        test: /\.js$/,
-        loaders: [ 'babel' ],
-        exclude: /node_modules/,
-        include: __dirname
-     },
-     { test: /\.json$/, loader: 'json' },
+        {
+            // Test expects a RegExp! Note the slashes!
+            test: /\.css$/,
+            loaders: ['style', 'css'],
+            // Include accepts either a path or an array of paths.
+            include: path.join(__dirname, 'css')
+        },
+        {
+            test: /\.js$/,
+            loaders: [ 'babel' ],
+            exclude: /node_modules/,
+            include: __dirname
+        },
+        {  test: /\.json$/,
+            loader: 'json'
+        },
     ]
   }
 }

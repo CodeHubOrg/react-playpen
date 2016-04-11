@@ -1,20 +1,21 @@
 import * as types from '../constants/ActionTypes'
 
-function filterWord(letter) {
+export const filterWords = (letter, position) => {
   return {
-    type: FILTER_WORD,
-    letter
+    type: types.FILTER_WORDS,
+    letter,
+    position
   }
 }
 
-function incrementLetterFilter() {
+export const incrementLetterFilter = () => {
   return {
-    type: INCREMENT_LETTER_FILTER
+    type: types.INCREMENT_LETTER_FILTER
   }
 }
 
-function toggleIncrementLetterFilter(text) {
+export const toggleIncrementLetterFilter = () => {
   return {
-    type: TOGGLE_INCREMENT_LETTER_FILTER
+    type: types.TOGGLE_INCREMENT_LETTER_FILTER
   }
 }
