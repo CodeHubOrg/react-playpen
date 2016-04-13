@@ -4,7 +4,8 @@ import { toggleIncrementLetterFilter } from '../actions'
 
 export default class Settings extends Component {
   render() {
-    const { store, show } = this.props
+    const { store } = this.props
+    const { show } = store.getState()
     return (
         <div className="well col-md-3 gutter-left">
             <h2>Settings</h2>

@@ -3,70 +3,92 @@ import twoLetterWords from '../stores/words-two-letter.json';
 import threeLetterWords from '../stores/words-three-letter.json';
 import { FILTER_WORDS_BY_LETTER_POSITION, FILTER_WORDS_BY_LETTER_IN_ANY_POSITION, INCREMENT_LETTER_FILTER, INCREMENT_LETTER_IN_ANY_POSITION_FILTER, TOGGLE_INCREMENT_LETTER_FILTER } from '../constants/ActionTypes'
 
-const initalWords = threeLetterWords;
+const alphabet     = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+const initalWords  = threeLetterWords;
 const initialState = {
     words: initalWords,
     letterFilter: [' ', ' ', ' '],
-    // letterOptions: [letters, letters, letters],
-    wordContains: null,
+    letterOptions: [alphabet, alphabet, alphabet],
+    wordContains: ' ',
     show: false
 }
 
-const filterWordsByLetterPosition = (words, letterFilter) => {
-    return words.filter(item => {
-        return letterFilter.every((letter, position) => {
-            // console.log(item.word, position, letter, item.word[position], letter === item.word[position])
-            return (letter === ' ') ? true : item.word[position] === letter
-        })
-    })
-}
+const filterWordsByLetterPosition = (words, letterFilter) => words.filter(item => letterFilter.every((letter, position) => (letter === ' ') ? true : item.word[position] === letter))
 
 const filterWordsByLetterInAnyPosition = (words, letter) => words.filter(item => item.word.indexOf(letter) !== -1)
 
+const filterLetterOpts = (opts, letterFilter, words) => {
+    let filteredOpts = []
+    letterFilter.forEach((letter, pos) => {
+        let newLetterFilter = letterFilter.slice()
+        newLetterFilter[pos] = ' '
+        const filteredWords = filterWordsByLetterPosition(words, newLetterFilter)
+        filteredOpts.push(opts.filter(letter => filteredWords.some(item => (letter === ' ') ? true : item.word[pos] === letter)))
+    })
+    return filteredOpts
+}
+
+const nextLetter = (current, letters = alphabet) => {
+    const currentIndex = letters.findIndex(letter => letter === current)
+    const nextIndex    = (currentIndex === letters.length - 1) ? 0 : currentIndex + 1
+    return letters[nextIndex]
+}
+
+const dump = (name, arr) => arr.forEach((el, i) => console.log(name + ' pos ' + i, el))
+
 export default function letterApp(state = initialState, action) {
-  let letterFilter = state.letterFilter.slice()
-  let letterIndex = null;
-  let nextLetterIndex = null;
+  let words           = state.words
+  let letterFilter    = state.letterFilter
+  let letterOptions   = state.letterOptions
+  let wordContains    = state.wordContains
+
   switch (action.type) {
+
     case FILTER_WORDS_BY_LETTER_POSITION:
         letterFilter[action.position] = action.letter;
+        words                         = filterWordsByLetterPosition(initalWords, letterFilter)
+        letterOptions                 = filterLetterOpts(alphabet, letterFilter, initalWords)
         return Object.assign({}, state, {
-            words: filterWordsByLetterPosition(initalWords, letterFilter),
+            words: words,
             letterFilter: letterFilter,
+            letterOptions: letterOptions,
             wordContains: ' '
         })
+
     case FILTER_WORDS_BY_LETTER_IN_ANY_POSITION:
-        console.log(FILTER_WORDS_BY_LETTER_IN_ANY_POSITION);
+        words = filterWordsByLetterInAnyPosition(initalWords, action.letter)
+        wordContains = action.letter
         return Object.assign({}, state, {
-            words: filterWordsByLetterInAnyPosition(initalWords, action.letter),
-            letterFilter: [' ', ' ', ' '],
-            wordContains: action.letter
-        })
-    case INCREMENT_LETTER_FILTER:
-        letterIndex       = letters.findIndex(item => item.letter === state.letterFilter[action.position]);
-        nextLetterIndex   = (letterIndex >= letters.length - 1) ? 0 : letterIndex + 1;
-        letterFilter[action.position] = letters[nextLetterIndex].letter;
-
-        return Object.assign({}, state, {
-            words: filterWordsByLetterPosition(initalWords, letterFilter),
-            letterFilter: letterFilter,
-            wordContains: ' '
-        })
-    case INCREMENT_LETTER_IN_ANY_POSITION_FILTER:
-        console.log(INCREMENT_LETTER_IN_ANY_POSITION_FILTER);
-        letterIndex     = letters.findIndex(item => item.letter === state.wordContains);
-        nextLetterIndex = (letterIndex >= letters.length - 1) ? 0 : letterIndex + 1;
-        const wordContains    = letters[nextLetterIndex].letter;
-
-        return Object.assign({}, state, {
-            words: filterWordsByLetterInAnyPosition(initalWords, wordContains),
+            words: words,
             letterFilter: [' ', ' ', ' '],
             wordContains: wordContains
         })
+
+    case INCREMENT_LETTER_FILTER:
+        letterOptions                 = filterLetterOpts(alphabet, letterFilter, initalWords)
+        letterFilter[action.position] = nextLetter(letterFilter[action.position], letterOptions[action.position])
+        words                         = filterWordsByLetterPosition(initalWords, letterFilter)
+        return Object.assign({}, state, {
+            words: words,
+            letterFilter: letterFilter,
+            letterOptions: letterOptions,
+            wordContains: ' '
+        })
+
+    case INCREMENT_LETTER_IN_ANY_POSITION_FILTER:
+        wordContains = nextLetter(state.wordContains)
+        words        = filterWordsByLetterInAnyPosition(initalWords, wordContains)
+        return Object.assign({}, state, {
+            words: words,
+            letterFilter: [' ', ' ', ' '],
+            wordContains: wordContains
+        })
+
     case TOGGLE_INCREMENT_LETTER_FILTER:
         return Object.assign({}, state, {
             show: !state.show
         })
+
     default:
       return state
   }

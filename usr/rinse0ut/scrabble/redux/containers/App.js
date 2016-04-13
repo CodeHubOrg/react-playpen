@@ -11,10 +11,10 @@ export default class App extends Component {
         <div>
             <h1>Two Letter Words</h1>
             <Filter store={store} letters={letters} />
-            <Settings store={store} show={show} />
+            <Settings store={store} />
             <div className="pull-left">
             {
-                words.map(item => <span>{item.word} </span>)
+                words.map(item => <span key={item.word}>{item.word} </span>)
             }
             </div>
         </div>
