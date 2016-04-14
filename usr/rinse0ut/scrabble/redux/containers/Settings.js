@@ -1,20 +1,31 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Checkbox from '../components/Checkbox'
 import { toggleIncrementLetterFilter } from '../actions'
 
 export default class Settings extends Component {
   render() {
-    const { store } = this.props
-    const { settingsFilter } = store.getState()
+    const { showLetterIncrementors } = this.props.settingsFilter
+    const dispatch = this.props.dispatch
     return (
         <div className="well col-md-3 gutter-left">
             <h2>Settings</h2>
             <Checkbox
-                onChange={() => store.dispatch(toggleIncrementLetterFilter())}
-                checked={settingsFilter.showLetterIncrementors}
+                onChange={() => dispatch(toggleIncrementLetterFilter())}
+                checked={showLetterIncrementors}
                 text="Letter Incrementor"
             />
         </div>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    settingsFilter: state.settingsFilter
+  }
+}
+
+export default connect(
+    mapStateToProps
+)(Settings)

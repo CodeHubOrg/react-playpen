@@ -1,20 +1,33 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import FilterLetter from '../components/FilterLetter'
 import { filterWordsByLetterPosition, incrementLetterFilter } from '../actions'
 
 export default class FilterLetterByPosition extends Component {
   render() {
-    const { store, position, text } = this.props
-    const { settingsFilter, wordFilter } = store.getState()
+    const { position, text, letterFilter, letterOptions, showLetterIncrementors } = this.props
+    const dispatch = this.props.dispatch
     return (
         <FilterLetter
-            onChange={(e) => store.dispatch(filterWordsByLetterPosition(e.target.value, position))}
-            onIncrement={() => store.dispatch(incrementLetterFilter(position))}
-            value={wordFilter.letterFilter[position]}
-            options={wordFilter.letterOptions[position]}
+            onChange={(e) => dispatch(filterWordsByLetterPosition(e.target.value, position))}
+            onIncrement={() => dispatch(incrementLetterFilter(position))}
+            value={letterFilter[position]}
+            options={letterOptions[position]}
             text={text}
-            show={settingsFilter.showLetterIncrementors}
+            show={showLetterIncrementors}
         />
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    showLetterIncrementors: state.settingsFilter.showLetterIncrementors,
+    letterFilter: state.wordFilter.letterFilter,
+    letterOptions: state.wordFilter.letterOptions
+  }
+}
+
+export default connect(
+    mapStateToProps
+)(FilterLetterByPosition)

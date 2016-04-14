@@ -5,8 +5,8 @@ import threeLetterWords from '../stores/words-three-letter.json';
 const alphabet     = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 const initalWords  = threeLetterWords;
 const initialState = {
-    words: threeLetterWords,
-    letterFilter: ['Z', ' ', ' '],
+    words: initalWords,
+    letterFilter: [' ', ' ', ' '],
     letterOptions: [alphabet, alphabet, alphabet],
     wordContains: ' '
 }
@@ -36,58 +36,42 @@ const nextLetter = (current, letters = alphabet) => {
     return letters[nextIndex]
 }
 
-const words = (state, action) => {
-    switch (action.type) {
-        case 'FILTER_WORDS_BY_LETTER_POSITION':
-        case 'INCREMENT_LETTER_FILTER':
-            return filterWordsByLetterPosition(initalWords, state.letterFilter)
-
-        case 'FILTER_WORDS_BY_LETTER_IN_ANY_POSITION':
-        case 'INCREMENT_LETTER_IN_ANY_POSITION_FILTER':
-            return filterWordsByLetterInAnyPosition(initalWords, state.wordContains)
-
-        default:
-            return state.words
-    }
+const dump = (name, arr) => {
+    arr.forEach((el, i) => console.log(name + ' pos ' + i, el))
 }
 
-const wordFilter = (state = initialState, action) => {
-  let newState = Object.assign({}, state)
+export default function words(state = initialState, action) {
+  let words           = state.words
+  let letterFilter    = state.letterFilter
+  console.log('WORDS', state)
+
   switch (action.type) {
 
     case 'FILTER_WORDS_BY_LETTER_POSITION':
-        newState.letterFilter[action.position] = action.letter;  // override using ... in return statement
-        newState.letterOptions = filterLetterOpts(alphabet, newState.letterFilter, initalWords)
-
-        return Object.assign({}, newState, {
-            words: words(newState, action)
+        words = filterWordsByLetterPosition(initalWords, letterFilter)
+        return Object.assign({}, state, {
+            words: words,
         })
 
     case 'FILTER_WORDS_BY_LETTER_IN_ANY_POSITION':
-        newState.letterFilter = [' ', ' ', ' ']
-        newState.wordContains = action.letter
-        return Object.assign({}, newState, {
-            words: words(newState, action)
+        words = filterWordsByLetterInAnyPosition(initalWords, action.letter)
+        return Object.assign({}, state, {
+            words: words,
         })
 
     case 'INCREMENT_LETTER_FILTER':
-        newState.letterOptions = filterLetterOpts(alphabet, newState.letterFilter, initalWords)
-        newState.letterFilter[action.position] = nextLetter(newState.letterFilter[action.position], newState.letterOptions[action.position])
-        newState.wordContains = ' '
-        return Object.assign({}, newState, {
-            words: words(newState, action)
+        words = filterWordsByLetterPosition(initalWords, letterFilter)
+        return Object.assign({}, state, {
+            words: words,
         })
 
     case 'INCREMENT_LETTER_IN_ANY_POSITION_FILTER':
-        newState.wordContains = nextLetter(newState.wordContains)
-        newState.letterFilter = [' ', ' ', ' ']
-        return Object.assign({}, newState, {
-            words: words(newState, action)
+        words = filterWordsByLetterInAnyPosition(initalWords, wordContains)
+        return Object.assign({}, state, {
+            words: words,
         })
 
     default:
       return state
   }
 }
-
-export default wordFilter
