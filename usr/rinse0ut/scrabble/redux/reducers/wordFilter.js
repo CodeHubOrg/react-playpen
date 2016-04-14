@@ -5,7 +5,7 @@ import threeLetterWords from '../stores/words-three-letter.json';
 const alphabet     = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 const initalWords  = threeLetterWords;
 const initialState = {
-    words: initalWords,
+    words: threeLetterWords,
     letterFilter: [' ', ' ', ' '],
     letterOptions: [alphabet, alphabet, alphabet],
     wordContains: ' '
@@ -36,59 +36,58 @@ const nextLetter = (current, letters = alphabet) => {
     return letters[nextIndex]
 }
 
-const dump = (name, arr) => {
-    arr.forEach((el, i) => console.log(name + ' pos ' + i, el))
+const words = (state, action) => {
+    switch (action.type) {
+        case 'FILTER_WORDS_BY_LETTER_POSITION':
+        case 'INCREMENT_LETTER_FILTER':
+            return filterWordsByLetterPosition(initalWords, state.letterFilter)
+
+        case 'FILTER_WORDS_BY_LETTER_IN_ANY_POSITION':
+        case 'INCREMENT_LETTER_IN_ANY_POSITION_FILTER':
+            return filterWordsByLetterInAnyPosition(initalWords, state.wordContains)
+
+        default:
+            return state.words
+    }
 }
 
-export default function wordFilter(state = initialState, action) {
-  let words           = state.words
-  let letterFilter    = state.letterFilter
-  let letterOptions   = state.letterOptions
-  let wordContains    = state.wordContains
-
+const wordFilter = (state = initialState, action) => {
+  let newState = Object.assign({}, state)
   switch (action.type) {
 
     case 'FILTER_WORDS_BY_LETTER_POSITION':
-        letterFilter[action.position] = action.letter;
-        words                         = filterWordsByLetterPosition(initalWords, letterFilter)
-        letterOptions                 = filterLetterOpts(alphabet, letterFilter, initalWords)
-        return Object.assign({}, state, {
-            words: words,
-            letterFilter: letterFilter,
-            letterOptions: letterOptions,
-            wordContains: ' '
+        newState.letterFilter[action.position] = action.letter;  // override using ... in return statement
+        newState.letterOptions = filterLetterOpts(alphabet, newState.letterFilter, initalWords)
+
+        return Object.assign({}, newState, {
+            words: words(newState, action)
         })
 
     case 'FILTER_WORDS_BY_LETTER_IN_ANY_POSITION':
-        words = filterWordsByLetterInAnyPosition(initalWords, action.letter)
-        wordContains = action.letter
-        return Object.assign({}, state, {
-            words: words,
-            letterFilter: [' ', ' ', ' '],
-            wordContains: wordContains
+        newState.letterFilter = [' ', ' ', ' ']
+        newState.wordContains = action.letter
+        return Object.assign({}, newState, {
+            words: words(newState, action)
         })
 
     case 'INCREMENT_LETTER_FILTER':
-        letterOptions                 = filterLetterOpts(alphabet, letterFilter, initalWords)
-        letterFilter[action.position] = nextLetter(letterFilter[action.position], letterOptions[action.position])
-        words                         = filterWordsByLetterPosition(initalWords, letterFilter)
-        return Object.assign({}, state, {
-            words: words,
-            letterFilter: letterFilter,
-            letterOptions: letterOptions,
-            wordContains: ' '
+        newState.letterOptions = filterLetterOpts(alphabet, newState.letterFilter, initalWords)
+        newState.letterFilter[action.position] = nextLetter(newState.letterFilter[action.position], newState.letterOptions[action.position])
+        newState.wordContains = ' '
+        return Object.assign({}, newState, {
+            words: words(newState, action)
         })
 
     case 'INCREMENT_LETTER_IN_ANY_POSITION_FILTER':
-        wordContains = nextLetter(state.wordContains)
-        words        = filterWordsByLetterInAnyPosition(initalWords, wordContains)
-        return Object.assign({}, state, {
-            words: words,
-            letterFilter: [' ', ' ', ' '],
-            wordContains: wordContains
+        newState.wordContains = nextLetter(newState.wordContains)
+        newState.letterFilter = [' ', ' ', ' ']
+        return Object.assign({}, newState, {
+            words: words(newState, action)
         })
 
     default:
       return state
   }
 }
+
+export default wordFilter

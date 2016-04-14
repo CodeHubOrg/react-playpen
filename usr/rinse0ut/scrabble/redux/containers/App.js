@@ -9,7 +9,7 @@ export default class App extends Component {
     const { show, wordFilter } = store.getState()
     return (
         <div>
-            <h1>Two Letter Words</h1>
+            <h1>Scrabble Words</h1>
             <Filter store={store} letters={letters} />
             <Settings store={store} />
             <div className="pull-left">
