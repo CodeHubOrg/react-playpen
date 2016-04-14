@@ -6,7 +6,7 @@ import letters from '../stores/letters.json'
 export default class App extends Component {
   render() {
     const store = this.props.store
-    const { show, words } = store.getState()
+    const { show, wordFilter } = store.getState()
     return (
         <div>
             <h1>Two Letter Words</h1>
@@ -14,7 +14,7 @@ export default class App extends Component {
             <Settings store={store} />
             <div className="pull-left">
             {
-                words.map(item => <span key={item.word}>{item.word} </span>)
+                wordFilter.words.map(item => <span key={item.word}>{item.word} </span>)
             }
             </div>
         </div>

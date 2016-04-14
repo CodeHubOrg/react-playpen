@@ -5,15 +5,15 @@ import { filterWordsByLetterInAnyPosition, incrementLetterFilterInAnyPosition } 
 export default class FilterLetterByAnyPosition extends Component {
     render() {
         const { store, letters, position, text } = this.props
-        const { show, wordContains, words } = store.getState()
+        const { settingsFilter, wordFilter } = store.getState()
         return (
             <FilterLetter
                 onChange={(e) => store.dispatch(filterWordsByLetterInAnyPosition(e.target.value))}
                 onIncrement={() => store.dispatch(incrementLetterFilterInAnyPosition())}
-                value={wordContains}
+                value={wordFilter.wordContains}
                 options={letters.map(item => item.letter)}
                 text={text}
-                show={show}
+                show={settingsFilter.showLetterIncrementors}
             />
         )
   }

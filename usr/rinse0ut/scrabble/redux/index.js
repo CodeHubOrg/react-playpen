@@ -2,11 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { createStore } from 'redux'
 import App from './containers/App'
-import letterApp from './reducers'
+import scrabbleApp from './reducers'
 import './css/bootstrap.css'
 import './css/style.css'
 
-const store = createStore(letterApp)
+const store = createStore(scrabbleApp)
 const rootEl = document.getElementById('root')
 
 function render() {
