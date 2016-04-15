@@ -5,12 +5,12 @@ import threeLetterWords from '../stores/words-three-letter.json';
 const alphabet     = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 const initalWords  = threeLetterWords;
 const initialState = {
-    letterValues: [' ', ' ', ' '],
+    letters: [' ', ' ', ' '],
     wordContains: ' '
 }
 
-export const filterWordsByLetterPosition = (words, letterValues) => {
-    return words.filter(item => letterValues.every((letter, position) => (letter === ' ') ? true : item.word[position] === letter))
+export const filterWordsByLetterPosition = (words, letters) => {
+    return words.filter(item => letters.every((letter, position) => (letter === ' ') ? true : item.word[position] === letter))
 }
 
 export const filterWordsByLetterInAnyPosition = (words, letter) => {
@@ -18,11 +18,11 @@ export const filterWordsByLetterInAnyPosition = (words, letter) => {
 }
 
 // Filter letter options based on possible words made with the other selected letters values
-export const filterLetterOpts = (letterValues, opts = alphabet, words = initalWords) => {
+export const filterLetterOpts = (letters, opts = alphabet, words = initalWords) => {
     let filteredOpts = []
-    letterValues.forEach((letter, pos) => {
-        const letterValuesWithCurrentLetterAsBlank = letterValues.map((letter, key) => (key === pos) ? ' ' : letter)
-        const validWords = filterWordsByLetterPosition(words, letterValuesWithCurrentLetterAsBlank)
+    letters.forEach((letter, pos) => {
+        const lettersWithCurrentLetterAsBlank = letters.map((letter, key) => (key === pos) ? ' ' : letter)
+        const validWords = filterWordsByLetterPosition(words, lettersWithCurrentLetterAsBlank)
         const validLetters = opts.filter(letter => validWords.some(item => (letter === ' ') ? true : item.word[pos] === letter))
         filteredOpts.push(validLetters)
     })
@@ -39,25 +39,25 @@ const wordFilter = (state = initialState, action) => {
     switch (action.type) {
         case 'FILTER_WORDS_BY_LETTER_POSITION':
             return Object.assign({}, state,  {
-                letterValues: state.letterValues.map((letter, position) => position === action.position ? action.letter : letter),
+                letters: state.letters.map((letter, position) => position === action.position ? action.letter : letter),
                 wordContains: ' '
             })
         case 'FILTER_WORDS_BY_LETTER_IN_ANY_POSITION':
             return Object.assign({}, state, {
-                letterValues: [' ', ' ', ' '],
+                letters: [' ', ' ', ' '],
                 wordContains: action.letter
             })
         case 'INCREMENT_LETTER_FILTER':
             return Object.assign({}, state, {
-                letterValues: state.letterValues.map((letter, position) => position === action.position ?
-                    nextLetter(state.letterValues[action.position], action.letterOptions[action.position]) :
+                letters: state.letters.map((letter, position) => position === action.position ?
+                    nextLetter(state.letters[action.position], action.letterOptions[action.position]) :
                     letter),
                 wordContains: ' '
             })
         case 'INCREMENT_LETTER_IN_ANY_POSITION_FILTER':
             return Object.assign({}, state, {
-                letterValues: [' ', ' ', ' '],
-                wordContains: nextLetter(newState.wordContains)
+                letters: [' ', ' ', ' '],
+                wordContains: nextLetter(state.wordContains)
             })
         default:
             return state

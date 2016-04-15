@@ -6,7 +6,7 @@ const mapStateToProps = (state, props) => {
   return {
     words: state.wordFilter.wordContains !== ' ' ?
         filterWordsByLetterInAnyPosition(props.words, state.wordFilter.wordContains) :
-        filterWordsByLetterPosition(props.words, state.wordFilter.letterValues)
+        filterWordsByLetterPosition(props.words, state.wordFilter.letters)
   }
 }
 
