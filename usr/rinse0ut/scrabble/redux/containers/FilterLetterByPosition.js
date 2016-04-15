@@ -14,7 +14,7 @@ export default class FilterLetterByPosition extends Component {
     return (
         <FilterLetter
             onChange={(e) => dispatch(filterWordsByLetterPosition(e.target.value, position))}
-            onIncrement={() => dispatch(incrementletterValues(position))}
+            onIncrement={() => dispatch(incrementletterValues(position, letterOptions))}
             value={letterValues[position]}
             options={letterOptions[position]}
             text={text}

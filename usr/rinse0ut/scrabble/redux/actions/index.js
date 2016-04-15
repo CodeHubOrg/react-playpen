@@ -15,10 +15,11 @@ export const filterWordsByLetterInAnyPosition = (letter) => {
   }
 }
 
-export const incrementletterValues = (position = null) => {
+export const incrementletterValues = (position, letterOptions) => {
   return {
     type: types.INCREMENT_LETTER_FILTER,
-    position: position
+    position: position,
+    letterOptions: letterOptions
   }
 }
 
