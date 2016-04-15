@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Checkbox from '../components/Checkbox'
-import { toggleIncrementLetterFilter } from '../actions'
+import { toggleIncrementletterValues } from '../actions'
 
 export default class Settings extends Component {
   render() {
@@ -11,7 +11,7 @@ export default class Settings extends Component {
         <div className="well col-md-3 gutter-left">
             <h2>Settings</h2>
             <Checkbox
-                onChange={() => dispatch(toggleIncrementLetterFilter())}
+                onChange={() => dispatch(toggleIncrementletterValues())}
                 checked={showLetterIncrementors}
                 text="Letter Incrementor"
             />

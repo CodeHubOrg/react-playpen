@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import FilterLetter from '../components/FilterLetter'
-import { filterWordsByLetterInAnyPosition, incrementLetterFilterInAnyPosition } from '../actions'
+import { filterWordsByLetterInAnyPosition, incrementletterValuesInAnyPosition } from '../actions'
 
 export default class FilterLetterByAnyPosition extends Component {
     render() {
@@ -10,7 +10,7 @@ export default class FilterLetterByAnyPosition extends Component {
         return (
             <FilterLetter
                 onChange={(e) => dispatch(filterWordsByLetterInAnyPosition(e.target.value))}
-                onIncrement={() => dispatch(incrementLetterFilterInAnyPosition())}
+                onIncrement={() => dispatch(incrementletterValuesInAnyPosition())}
                 value={wordContains}
                 options={letters.map(item => item.letter)}
                 text={text}

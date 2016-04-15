@@ -8,6 +8,7 @@ import threeLetterWords from '../stores/words-three-letter.json';
 
 export default class App extends Component {
   render() {
+    console.log('Ive reloaded again!')
     const { settingsFilter, wordFilter } = this.props.state
     return (
         <div>

@@ -15,21 +15,21 @@ export const filterWordsByLetterInAnyPosition = (letter) => {
   }
 }
 
-export const incrementLetterFilter = (position = null) => {
+export const incrementletterValues = (position = null) => {
   return {
     type: types.INCREMENT_LETTER_FILTER,
     position: position
   }
 }
 
-export const incrementLetterFilterInAnyPosition = (position = null) => {
+export const incrementletterValuesInAnyPosition = (position = null) => {
   return {
     type: types.INCREMENT_LETTER_IN_ANY_POSITION_FILTER,
     position: position
   }
 }
 
-export const toggleIncrementLetterFilter = () => {
+export const toggleIncrementletterValues = () => {
   return {
     type: types.TOGGLE_INCREMENT_LETTER_FILTER
   }
