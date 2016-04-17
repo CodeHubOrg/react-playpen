@@ -1,32 +1,31 @@
 import * as types from '../constants/ActionTypes'
 
-export const filterWordsByLetterPosition = (letter, position) => {
+export const updateWordFilterLetter = (letter, position) => {
   return {
-    type: types.FILTER_WORDS_BY_LETTER_POSITION,
+    type: types.UPDATE_WORD_FILTER_LETTER,
     letter,
     position
   }
 }
 
-export const filterWordsByLetterInAnyPosition = (letter) => {
+export const updateWordFilterContains = (letter) => {
   return {
-    type: types.FILTER_WORDS_BY_LETTER_IN_ANY_POSITION,
+    type: types.UPDATE_WORD_FILTER_CONTAINS,
     letter
   }
 }
 
-export const incrementletterValues = (position, letterOptions) => {
+export const incrementWordFilterletter = (position, letterOptions) => {
   return {
-    type: types.INCREMENT_LETTER_FILTER,
+    type: types.INCREMENT_WORD_FILTER_LETTER,
     position: position,
     letterOptions: letterOptions
   }
 }
 
-export const incrementletterValuesInAnyPosition = (position = null) => {
+export const incrementWordFilterContains = () => {
   return {
-    type: types.INCREMENT_LETTER_IN_ANY_POSITION_FILTER,
-    position: position
+    type: types.INCREMENT_WORD_FILTER_CONTAINS
   }
 }
 

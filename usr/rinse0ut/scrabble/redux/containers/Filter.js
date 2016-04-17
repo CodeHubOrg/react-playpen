@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import FilterLetterByPosition from './FilterLetterByPosition'
-import FilterLetterByAnyPosition from './FilterLetterByAnyPosition'
+import WordFilterLetter from './WordFilterLetter'
+import WordFilterContains from './WordFilterContains'
 
 export default class Filter extends Component {
   render() {
@@ -9,10 +9,10 @@ export default class Filter extends Component {
             <h2>Filter</h2>
             {
                 <div>
-                    <FilterLetterByPosition position={0} text="First Letter" />
-                    <FilterLetterByPosition position={1} text="Second Letter" />
-                    <FilterLetterByPosition position={2} text="Third Letter" />
-                    <FilterLetterByAnyPosition position={null} text="Contains" letters={this.props.letters} />
+                    <WordFilterLetter position={0} text="First Letter" />
+                    <WordFilterLetter position={1} text="Second Letter" />
+                    <WordFilterLetter position={2} text="Third Letter" />
+                    <WordFilterContains position={null} text="Contains" letters={this.props.letters} />
                 </div>
             }
         </div>

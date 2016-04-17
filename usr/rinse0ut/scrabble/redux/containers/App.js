@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Filter from './Filter'
 import Settings from './Settings'
-import FilteredWordList from './FilteredWordList'
+import VisableWordList from './VisableWordList'
 import letters from '../stores/letters.json'
 import threeLetterWords from '../stores/words-three-letter.json';
 
@@ -14,7 +14,7 @@ export default class App extends Component {
             <h1>Scrabble Words</h1>
             <Filter letters={letters} />
             <Settings dispatch={this.props.dispatch} />
-            <FilteredWordList words={threeLetterWords} />
+            <VisableWordList words={threeLetterWords} />
         </div>
     )
   }

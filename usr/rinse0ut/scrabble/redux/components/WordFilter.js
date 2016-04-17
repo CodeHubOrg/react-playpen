@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import Letter from './Letter'
 import Select from './Select'
 
-const FilterLetter = ({ onChange, onIncrement, value, options, text, show }) => (
+const WordFilter = ({ onChange, onIncrement, value, options, text, show }) => (
     <div>
         {
             show ?
@@ -21,7 +21,7 @@ const FilterLetter = ({ onChange, onIncrement, value, options, text, show }) => 
     </div>
 )
 
-FilterLetter.propTypes = {
+WordFilter.propTypes = {
   onChange: PropTypes.func.isRequired,
   onIncrement: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
@@ -29,4 +29,4 @@ FilterLetter.propTypes = {
   text: PropTypes.string.isRequired
 }
 
-export default FilterLetter
+export default WordFilter
