@@ -2,29 +2,33 @@ import letters from '../stores/letters.json';
 import twoLetterWords from '../stores/words-two-letter.json';
 import threeLetterWords from '../stores/words-three-letter.json';
 
-const initalWords  = threeLetterWords;
 const initialState = {
     letters: [' ', ' ', ' '],
     contains: ' '
 }
+const initalWords  = threeLetterWords;
+
+const letterisInWordPosition = (letter, word, position) => letter === ' ' ? true : word[position] === letter
+
+const wordContains = (word, letter) => word.indexOf(letter) !== -1
+
+const defaultLetterOpts = letters.map(item => item.letter)
 
 export const filterWordsByLetters = (words, letters) => {
-    return words.filter(item => letters.every((letter, position) => (letter === ' ') ? true : item.word[position] === letter))
+    return words.filter(item => letters.every((letter, position) => letterisInWordPosition(letter, item.word, position)))
 }
 
 export const filterWordsByContains = (words, contains) => {
-    return words.filter(item => item.word.indexOf(contains) !== -1)
+    return words.filter(item => wordContains(item.word, contains))
 }
-
-const defaultLetterOpts = letters.map(item => item.letter)
 
 // Filter letter options based on possible words made with the other selected letter values
 export const filterLetterOpts = (letters, opts = defaultLetterOpts, words = initalWords) => {
     let filteredOpts = []
-    letters.forEach((letter, pos) => {
-        const lettersWithCurrentLetterAsBlank = letters.map((letter, key) => (key === pos) ? ' ' : letter)
+    letters.forEach((letter, position) => {
+        const lettersWithCurrentLetterAsBlank = letters.map((letter, key) => (key === position) ? ' ' : letter)
         const validWords = filterWordsByLetters(words, lettersWithCurrentLetterAsBlank)
-        const validLetters = opts.filter(letter => validWords.some(item => (letter === ' ') ? true : item.word[pos] === letter))
+        const validLetters = opts.filter(letter => validWords.some(item => letterisInWordPosition(letter, item.word, position)))
         filteredOpts.push(validLetters)
     })
     return filteredOpts
