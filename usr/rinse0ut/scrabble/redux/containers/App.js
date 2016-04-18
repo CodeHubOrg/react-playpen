@@ -12,9 +12,16 @@ export default class App extends Component {
     return (
         <div>
             <h1>Scrabble Words</h1>
-            <Filter letters={letters} />
-            <Settings dispatch={this.props.dispatch} />
-            <VisableWordList words={threeLetterWords} />
+            <Filter
+                letters={letters}
+                words={threeLetterWords}
+            />
+            <Settings
+                dispatch={this.props.dispatch}
+            />
+            <VisableWordList
+                words={threeLetterWords}
+            />
         </div>
     )
   }

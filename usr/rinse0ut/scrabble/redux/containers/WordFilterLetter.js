@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { filterLetterOpts } from '../reducers/wordFilter'
+import { filterLetterOpts, getLetterOpts } from '../reducers/wordFilter'
 import WordFilter from '../components/WordFilter'
 import { updateWordFilterLetter, incrementWordFilterletter } from '../actions'
 
@@ -21,11 +21,11 @@ export default class WordFilterLetter extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     showLetterIncrementors: state.settingsFilter.showLetterIncrementors,
     letters: state.wordFilter.letters,
-    letterOptions: filterLetterOpts(state.wordFilter.letters)
+    letterOptions: filterLetterOpts(state.wordFilter.letters, getLetterOpts(props.letters), props.words )
   }
 }
 

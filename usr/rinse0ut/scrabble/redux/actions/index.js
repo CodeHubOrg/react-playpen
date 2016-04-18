@@ -23,9 +23,11 @@ export const incrementWordFilterletter = (position, letterOptions) => {
   }
 }
 
-export const incrementWordFilterContains = () => {
+export const incrementWordFilterContains =  (position, letterOptions) => {
   return {
-    type: types.INCREMENT_WORD_FILTER_CONTAINS
+    type: types.INCREMENT_WORD_FILTER_CONTAINS,
+    position: position,
+    letterOptions: letterOptions
   }
 }
 

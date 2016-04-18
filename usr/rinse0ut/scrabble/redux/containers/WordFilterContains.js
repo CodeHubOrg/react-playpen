@@ -1,18 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { getLetterOpts } from '../reducers/wordFilter'
 import WordFilter from '../components/WordFilter'
 import { updateWordFilterContains, incrementWordFilterContains } from '../actions'
 
 export default class WordFilterContains extends Component {
     render() {
-        const { position, text, letters, contains, letterOptions, showLetterIncrementors } = this.props
+        const { text, letters, contains, showLetterIncrementors } = this.props
         const dispatch = this.props.dispatch
         return (
             <WordFilter
                 onChange={(e) => dispatch(updateWordFilterContains(e.target.value))}
-                onIncrement={() => dispatch(incrementWordFilterContains())}
+                onIncrement={() => dispatch(incrementWordFilterContains(contains, letters))}
                 value={contains}
-                options={letters.map(item => item.letter)}
+                options={letters}
                 text={text}
                 show={showLetterIncrementors}
             />
@@ -20,11 +21,11 @@ export default class WordFilterContains extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     showLetterIncrementors: state.settingsFilter.showLetterIncrementors,
     contains: state.wordFilter.contains,
-    letterOptions: state.wordFilter.letterOptions
+    letters: getLetterOpts(props.letters)
   }
 }
 

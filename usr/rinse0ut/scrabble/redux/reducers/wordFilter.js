@@ -1,18 +1,13 @@
-import letters from '../stores/letters.json';
-import twoLetterWords from '../stores/words-two-letter.json';
-import threeLetterWords from '../stores/words-three-letter.json';
-
 const initialState = {
     letters: [' ', ' ', ' '],
     contains: ' '
 }
-const initalWords  = threeLetterWords;
 
 const letterisInWordPosition = (letter, word, position) => letter === ' ' ? true : word[position] === letter
 
 const wordContains = (word, letter) => word.indexOf(letter) !== -1
 
-const defaultLetterOpts = letters.map(item => item.letter)
+export const getLetterOpts = (letters) => letters.map(item => item.letter)
 
 export const filterWordsByLetters = (words, letters) => {
     return words.filter(item => letters.every((letter, position) => letterisInWordPosition(letter, item.word, position)))
@@ -23,7 +18,7 @@ export const filterWordsByContains = (words, contains) => {
 }
 
 // Filter letter options based on possible words made with the other selected letter values
-export const filterLetterOpts = (letters, opts = defaultLetterOpts, words = initalWords) => {
+export const filterLetterOpts = (letters, opts, words) => {
     let filteredOpts = []
     letters.forEach((letter, position) => {
         const lettersWithCurrentLetterAsBlank = letters.map((letter, key) => (key === position) ? ' ' : letter)
@@ -34,7 +29,7 @@ export const filterLetterOpts = (letters, opts = defaultLetterOpts, words = init
     return filteredOpts
 }
 
-const nextLetter = (current, letters = defaultLetterOpts) => {
+const nextLetter = (current, letters) => {
     const currentIndex = letters.findIndex(letter => letter === current)
     const nextIndex    = (currentIndex === letters.length - 1) ? 0 : currentIndex + 1
     return letters[nextIndex]
@@ -58,7 +53,7 @@ const wordFilter = (state = initialState, action) => {
             })
         case 'INCREMENT_WORD_FILTER_CONTAINS':
             return Object.assign({}, initialState, {
-                contains: nextLetter(state.contains)
+                contains: nextLetter(state.contains, action.letterOptions)
             })
         default:
             return state
