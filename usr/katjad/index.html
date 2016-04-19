@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Turtles on Canvas</title>
+    <script>
+    
+    function radToDegrees(rad){
+        return rad / (Math.PI / 180);
+    };
+
+    function degreesToRad(angle){
+        return angle * (Math.PI / 180);
+    };
+
+
+    var Turtle = function(options){
+        var default_options = {
+            pos: {x: 0, y: 0},
+            colour: '#0000ff',
+            dir: 0
+        };
+
+        options = options || {};
+
+        for (var opt in default_options){
+        if (default_options.hasOwnProperty(opt) && !options.hasOwnProperty(opt))
+            options[opt] = default_options[opt];
+        }
+
+        this._pos = options.pos;
+        this._colour = options.colour;
+        this._dir = options.dir;
+    }
+
+
+    var TurtleCommands = (function(){
+       
+        var turtle = null
+
+        // for when chainCommands is used
+        var callstack = [];
+
+        // need to keep track of lines drawn by each command, need to draw 
+        // them again with each re-paint
+        var drawn = [];
+
+
+        var setTurtle = function(new_turtle){
+           if(!new_turtle){
+             turtle = new Turtle();
+           } else {
+             turtle = new_turtle;
+           }
+        }
+
+        var setDir = function(dir){
+            turtle._dir = dir;
+        };
+
+        var setPos = function(pos){
+            turtle._pos = pos;
+        };
+
+        var setColour = function(colour){
+            turtle._colour = colour;
+        };
+
+        var drawLine = function(ctx, coords){
+            ctx.beginPath();
+            ctx.moveTo(coords.x0, coords.y0);
+            ctx.lineTo(coords.x1, coords.y1);
+            ctx.stroke();
+            ctx.closePath();
+        };
+      
+        var forward = function(ctx, steps){  
+            ctx.fillStyle = turtle._colour;
+ 
+            var dx =  Math.sin(turtle._dir) * 20; 
+            var dy =  Math.cos(turtle._dir) * 20;
+
+            var step_counter = 0;  
+            var x = x_ori = turtle._pos.x;
+            var y = y_ori = turtle._pos.y;            
+            // console.log("x", x);        
+            // console.log("x_ori", x_ori);
+            //console.log(turtle);
+
+            var draw = function(){ 
+                    ctx.fillStyle = turtle._colour; 
+
+                                              
+                    if(step_counter < steps){
+                        ctx.clearRect(0,0, 1000,400);
+                       
+                        if(drawn != []){
+                            drawn.forEach(function(line){
+                               drawLine(ctx, line);
+                            });
+                        }
+                        
+                        ctx.beginPath();
+                        x += dx;
+                        y += dy;
+                        ctx.arc(x, y, 6, 0, Math.PI*2); 
+                        ctx.closePath();
+                        ctx.fillStyle = turtle._colour; 
+                        ctx.fill();
+                        ctx.beginPath();
+                        drawLine(ctx, {x0: x_ori, y0: y_ori, x1: x, y1: y});                          
+                        step_counter += 1;
+                        setTimeout(draw, 100);
+                    } else {
+                        var lineparams = {x0: x_ori, y0: y_ori, x1: x, y1: y};
+                        drawn.push(lineparams);
+                        console.log("time after drawing", Math.floor(Date.now() / 1000));
+                        setPos({x: x, y: y});
+                        if(callstack.length > 0){
+                           var nextcommand = callstack.shift();
+                           nextcommand.func.apply(this, nextcommand.params);
+                        }
+                    }
+            };
+
+            ctx.arc(x_ori, y_ori, 6, 0, Math.PI*2); 
+            ctx.closePath();  
+            ctx.fill();
+            setTimeout(draw, 300);          
+        }
+
+        var turn = function(degrees, direction, callbackparams){
+            var rad = degreesToRad(degrees);
+            newdir = (direction === 'left') ? turtle._dir + rad  : turtle._dir - rad;
+            setDir(newdir);  
+            if(callstack.length > 0){
+               var nextcommand = callstack.shift();
+               nextcommand.func.apply(this, nextcommand.params);
+            }
+        };
+
+        // TODO
+
+        var moveTo = function(pos){
+        };
+
+        var penup = function(){
+        };
+
+        var pendown = function(){
+        };
+
+        // pass command as function name and parameter array
+        var chainCommands = function(commands){
+            callstack = commands;
+            var firstcommand = callstack.shift();
+            firstcommand.func.apply(this, firstcommand.params);
+        }
+
+        return {
+            setTurtle: setTurtle,
+            forward: forward,
+            fd: forward,
+            turn: turn,
+            chainCommands: chainCommands
+        }
+
+    })();
+
+    
+    function init(){
+        var canvas = document.getElementById('canvas');  
+        var ctx = canvas.getContext('2d');          
+
+        var turtle = new Turtle({pos: {x: 100, y: 100}});
+        var tc = TurtleCommands;
+        tc.setTurtle(turtle);  
+
+        var commands = [
+            {func: tc.fd, params: [ctx, 5] },
+            {func: tc.turn, params: [90, 'left']},
+            {func: tc.fd, params: [ctx, 5]},
+            {func: tc.turn, params: [90, 'left']},
+            {func: tc.fd, params: [ctx, 5]},
+            {func: tc.turn, params: [90, 'right']},
+            {func: tc.fd, params: [ctx, 5]},
+            {func: tc.turn, params: [90, 'right']},
+            {func: tc.fd, params: [ctx, 5]},
+            {func: tc.turn, params: [90, 'left']},
+            {func: tc.fd, params: [ctx, 2]}, 
+            {func: tc.turn, params: [60, 'left']},  
+            {func: tc.fd, params: [ctx, 3]}, 
+            {func: tc.turn, params: [120, 'right']},  
+            {func: tc.fd, params: [ctx, 3]}     
+        ];
+
+        tc.chainCommands(commands);
+    }
+
+
+// forward(distance)
+// right(angle)
+// left(angle)
+// goto(x,y)
+// clear()
+// penup()
+// pendown()
+// reset()
+// angle(angle)
+// width(width)
+// colour(r,g,b,a)
+// write(string)
+// n = random(low,high)
+// hideTurtle()
+// showTurtle()
+// redrawOnMove(bool)
+// draw()
+// repeat(n, action)
+// wrap(bool)
+// animate(action,ms) 
+
+   
+
+    </script>
+    <style>
+        canvas {border: 1px solid black;}
+    </style>
+</head>
+<body onload="init();">
+    <canvas id="canvas" width="1000" height="400"></canvas>
+
+</body>
+</html>
